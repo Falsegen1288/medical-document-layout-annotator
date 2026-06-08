@@ -1,0 +1,17 @@
+fastapi>=0.110.0
+uvicorn>=0.28.0
+pydantic>=2.6.0
+python-multipart>=0.0.9
+pdf2image>=1.17.0
+pymupdf>=1.23.25
+nbformat>=5.9.2
+landingai-ade>=0.1.0
+pillow>=10.2.0
+docling>=1.0.0
+transformers>=4.40.0
+accelerate>=0.28.0
+timm>=0.9.16
+open-clip-torch>=2.24.0
+shapely>=2.0.3
+scipy>=1.12.0
+scikit-learn>=1.4.0
