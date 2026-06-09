@@ -34,18 +34,29 @@ export const AnnotationCanvas: React.FC<AnnotationCanvasProps> = ({ detections, 
   useEffect(() => {
     setLoading(true);
     const img = new Image();
-    img.src = imagePath;
-    img.crossOrigin = 'anonymous';
     img.onload = () => {
       setImage(img);
       setLoading(false);
       resetZoom(img);
     };
-    img.onerror = () => {
-      console.error('Failed to load canvas image');
+    img.onerror = (e) => {
+      console.error('Failed to load canvas image:', imagePath, e);
       setLoading(false);
     };
+    img.src = imagePath;
   }, [imagePath]);
+
+  // Console debug overlay to trace canvas dimensions and scaling values
+  useEffect(() => {
+    console.group('AnnotationCanvas render debug');
+    console.log('imagePath:', imagePath);
+    console.log('imageLoaded:', !!image);
+    console.log('detections:', detections?.length);
+    const canvas = canvasRef.current;
+    console.log('canvas size:', canvas ? `${canvas.width}x${canvas.height}` : 'null');
+    console.log('scale:', scale, 'offset:', offset);
+    console.groupEnd();
+  });
 
   // Handle ResizeObserver
   const [resizedDimensions, setResizedDimensions] = useState({ width: 600, height: 750 });
