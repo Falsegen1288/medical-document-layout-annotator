@@ -10,6 +10,7 @@ import fitz # PyMuPDF (no poppler required!)
 from backend.models.run_doclay import run_doclayoutyolo
 from backend.models.run_nemotron import run_nemotron
 from backend.models.run_ade import run_ade_dpt2
+from backend.evaluation import generate_side_by_side_visualizations, generate_comparison_chart, generate_pycote_report
 
 # Global progress store: session_id -> list/queue of progress messages
 sessions_progress = {}
@@ -64,7 +65,7 @@ def render_pdf_pages(pdf_path: str, pages: list, output_dir: str, dpi: int = 150
                 
     return page_paths
 
-def run_pipeline(session_id: str, pdf_path: str, notebook_config: dict, pages: list, output_dir: str):
+def run_pipeline(session_id: str, pdf_path: str, pages: list, output_dir: str):
     """
     Main background runner executing model pipeline and publishing progress.
     """
@@ -80,7 +81,7 @@ def run_pipeline(session_id: str, pdf_path: str, notebook_config: dict, pages: l
         
         # 1. Render PDF pages
         log_progress({"step": "rendering", "message": f"Rendering {len(pages)} pages to PNG at 150 DPI...", "percent": 15})
-        page_paths = render_pdf_pages(pdf_path, pages, output_dir, dpi=notebook_config["config"].get("render_dpi", 150))
+        page_paths = render_pdf_pages(pdf_path, pages, output_dir, dpi=150)
         
         # Load Images in memory
         page_images = {}
@@ -94,7 +95,7 @@ def run_pipeline(session_id: str, pdf_path: str, notebook_config: dict, pages: l
         time.sleep(0.1)
         
         # Run layout converter once for all pages
-        dl_results = run_doclayoutyolo(pdf_path, page_images, pages, notebook_config)
+        dl_results = run_doclayoutyolo(pdf_path, page_images, pages, {"config": {"min_bbox_area": 100}})
         
         for idx, pg in enumerate(pages):
             log_progress({
@@ -113,9 +114,9 @@ def run_pipeline(session_id: str, pdf_path: str, notebook_config: dict, pages: l
         time.sleep(0.1)
         
         # Run Nemotron once for all pages
-        nm_results = run_nemotron(page_images, pages, notebook_config)
+        nm_results = run_nemotron(page_images, pages, {"config": {"min_bbox_area": 100}})
         
-        nemotron_pages = notebook_config.get("nemotron_pages", [7, 15, 17, 19, 25])
+        nemotron_pages = [7, 15, 17, 19, 25]
         for idx, pg in enumerate(pages):
             if pg in nemotron_pages:
                 log_progress({
@@ -142,7 +143,8 @@ def run_pipeline(session_id: str, pdf_path: str, notebook_config: dict, pages: l
         time.sleep(0.1)
         
         # Run ADE-DPT2 once for all pages
-        ade_results = run_ade_dpt2(page_paths, notebook_config.get("landing_ai_key"), notebook_config)
+        # The API key can be fetched from os.environ or left None for the mock fallback
+        ade_results = run_ade_dpt2(page_paths, os.environ.get("LANDING_AI_API_KEY"), {"config": {"min_bbox_area": 100}})
         
         for idx, pg in enumerate(pages):
             log_progress({
@@ -156,7 +158,18 @@ def run_pipeline(session_id: str, pdf_path: str, notebook_config: dict, pages: l
             
         log_progress({"step": "model_c_complete", "message": "ADE-DPT2 processing complete.", "percent": 95})
         
-        # 5. Build annotation_input.json structure
+        # 5. Generate Evaluation Artifacts
+        log_progress({"step": "evaluation", "message": "Generating visualizations, charts, and pyCOTe reports...", "percent": 96})
+        
+        try:
+            generate_side_by_side_visualizations(page_images, dl_results, nm_results, nemotron_pages, output_dir)
+            generate_comparison_chart(dl_results, nm_results, nemotron_pages, output_dir)
+            generate_pycote_report(dl_results, nm_results, page_images, nemotron_pages, output_dir)
+        except Exception as eval_err:
+            log_progress({"step": "evaluation_warning", "message": f"Failed to generate some evaluations: {eval_err}", "percent": 97})
+            print(f"Evaluation error: {eval_err}")
+            
+        # 6. Build annotation_input.json structure
         log_progress({"step": "saving", "message": "Saving annotation session to workspace cache...", "percent": 98})
         
         annotation_input = {}

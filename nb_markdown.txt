@@ -1,0 +1,47 @@
+# 📐 Layout Detection Benchmark
+## DocLayoutYOLO (via Docling) vs NVIDIA Nemotron-Parse-v1.1
+
+---
+
+## 🏗️ Pipeline Overview
+
+```
+Upload PDF
+     ↓
+Render each page → PNG (150 DPI)
+     ↓
+     ├── Model A: DocLayoutYOLO (YOLO-based layout detector)
+     │            via Docling  →  bboxes + class labels
+     │
+     └── Model B: NVIDIA Nemotron-Parse-v1.1 (ViT-H encoder + mBart decoder)
+                  via HuggingFace  →  bboxes + class labels + markdown
+                  ⚠️  Only runs on pages 7, 15, 17, 19, 25 (VRAM constraint on T4)
+                  ⚠️  Input letterboxed to 896×896 square to preserve aspect ratio
+     ↓
+Side-by-side visualisation per page (Nemotron pages only)
+     ↓
+Comparison metrics: element counts, class distribution
+```
+
+---
+
+| | DocLayoutYOLO | NVIDIA Nemotron-Parse-v1.1 |
+|---|---|---|
+| **Architecture** | YOLO-based object detector | ViT-H encoder + mBart decoder |
+| **Parameters** | ~20M | ~885M |
+| **Classes** | 11 (DocLayNet labels) | 11 (incl. Page-header/footer) |
+| **Output** | Bounding boxes + classes | Bboxes + classes + text |
+| **Speed** | Very fast (CPU-capable) | Slower (GPU strongly recommended) |
+| **License** | MIT (via Docling) | NVIDIA Open Model License |
+
+> **Note:** Run on Kaggle T4 GPU. Nemotron is limited to 5 pages due to VRAM.
+> Input images are **letterbox-padded** to 896×896 (not stretched) so bbox coordinates
+> are geometrically correct after inverting the transform back to original pixel space.
+## Cell 1 — Install Dependencies
+## Cell 2 — Configuration & Imports
+## Cell 3 — Upload PDF
+## Cell 4 — Render PDF Pages to Images
+## Cell 5 — Model A: DocLayoutYOLO via Docling
+## Cell 6 — Model B: NVIDIA Nemotron-Parse-v1.1
+## Cell 7 — Side-by-Side Visualisation (Nemotron pages only)
+## Cell 8 — Comparison Metrics & Summary Report

@@ -1,0 +1,242 @@
+{
+  "7": {
+    "page": 7,
+    "image_path": "/api/images/test_run_session/page_07_original.png",
+    "image_size": [
+      1275,
+      1650
+    ],
+    "model_a": {
+      "name": "DocLayoutYOLO",
+      "detections": [
+        {
+          "type": "title",
+          "bbox": [
+            120.0,
+            80.0,
+            1150.0,
+            170.0
+          ],
+          "text": "Mock YOLO text on page 7",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "section_header",
+          "bbox": [
+            120.0,
+            190.0,
+            700.0,
+            230.0
+          ],
+          "text": "Mock YOLO text on page 7",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            120.0,
+            270.0,
+            600.0,
+            510.0
+          ],
+          "text": "Mock YOLO text on page 7",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            120.0,
+            530.0,
+            600.0,
+            840.0
+          ],
+          "text": "Mock YOLO text on page 7",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            650.0,
+            270.0,
+            1150.0,
+            490.0
+          ],
+          "text": "Mock YOLO text on page 7",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            650.0,
+            510.0,
+            1150.0,
+            740.0
+          ],
+          "text": "Mock YOLO text on page 7",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "picture",
+          "bbox": [
+            150.0,
+            870.0,
+            1120.0,
+            1545.0
+          ],
+          "text": "Mock YOLO text on page 7",
+          "model": "DocLayoutYOLO"
+        }
+      ]
+    },
+    "model_b": {
+      "name": "Nemotron-Parse-v1.1",
+      "detections": [
+        {
+          "type": "title",
+          "bbox": [
+            115.0,
+            82.0,
+            1160.0,
+            175.0
+          ],
+          "text": "Mock Nemotron parsed text on page 7",
+          "model": "Nemotron-Parse-v1.1"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            120.0,
+            270.0,
+            600.0,
+            510.0
+          ],
+          "text": "Mock Nemotron parsed text on page 7",
+          "model": "Nemotron-Parse-v1.1"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            120.0,
+            530.0,
+            600.0,
+            840.0
+          ],
+          "text": "Mock Nemotron parsed text on page 7",
+          "model": "Nemotron-Parse-v1.1"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            650.0,
+            270.0,
+            1150.0,
+            490.0
+          ],
+          "text": "Mock Nemotron parsed text on page 7",
+          "model": "Nemotron-Parse-v1.1"
+        },
+        {
+          "type": "picture",
+          "bbox": [
+            150.0,
+            870.0,
+            1120.0,
+            1545.0
+          ],
+          "text": "Mock Nemotron parsed text on page 7",
+          "model": "Nemotron-Parse-v1.1"
+        }
+      ]
+    },
+    "model_c": {
+      "name": "ADE-DPT2",
+      "detections": [
+        {
+          "type": "title",
+          "bbox": [
+            120.0,
+            80.0,
+            1150.0,
+            170.0
+          ],
+          "text": "Mock ADE parsed text on page 7",
+          "model": "ADE-DPT2",
+          "ade_raw_type": "heading"
+        },
+        {
+          "type": "section_header",
+          "bbox": [
+            120.0,
+            190.0,
+            700.0,
+            230.0
+          ],
+          "text": "Mock ADE parsed text on page 7",
+          "model": "ADE-DPT2",
+          "ade_raw_type": "text"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            120.0,
+            270.0,
+            600.0,
+            510.0
+          ],
+          "text": "Mock ADE parsed text on page 7",
+          "model": "ADE-DPT2",
+          "ade_raw_type": "text"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            120.0,
+            530.0,
+            600.0,
+            840.0
+          ],
+          "text": "Mock ADE parsed text on page 7",
+          "model": "ADE-DPT2",
+          "ade_raw_type": "text"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            650.0,
+            270.0,
+            1150.0,
+            490.0
+          ],
+          "text": "Mock ADE parsed text on page 7",
+          "model": "ADE-DPT2",
+          "ade_raw_type": "text"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            650.0,
+            510.0,
+            1150.0,
+            740.0
+          ],
+          "text": "Mock ADE parsed text on page 7",
+          "model": "ADE-DPT2",
+          "ade_raw_type": "text"
+        },
+        {
+          "type": "picture",
+          "bbox": [
+            150.0,
+            870.0,
+            1120.0,
+            1545.0
+          ],
+          "text": "Mock ADE parsed text on page 7",
+          "model": "ADE-DPT2",
+          "ade_raw_type": "text"
+        }
+      ]
+    },
+    "ground_truth": null
+  }
+}

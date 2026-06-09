@@ -9,7 +9,6 @@ from pydantic import BaseModel
 from typing import List, Dict, Optional
 import shutil
 
-from backend.notebook_parser import extract_notebook_config
 from backend.pipeline import run_pipeline, sessions_progress
 
 app = FastAPI(title="Layout Annotator API")
@@ -33,7 +32,6 @@ class SaveRequest(BaseModel):
 async def start_session(
     background_tasks: BackgroundTasks,
     pdf: UploadFile = File(...),
-    notebook: UploadFile = File(...),
     pages: str = Form(...) # comma-separated and/or ranges (e.g. "1-5,7,15-20")
 ):
     # 1. Generate unique session ID
@@ -43,17 +41,10 @@ async def start_session(
     
     # 2. Save uploaded files
     pdf_path = os.path.join(session_dir, pdf.filename)
-    nb_path = os.path.join(session_dir, notebook.filename)
     
     with open(pdf_path, "wb") as buffer:
         shutil.copyfileobj(pdf.file, buffer)
         
-    with open(nb_path, "wb") as buffer:
-        shutil.copyfileobj(notebook.file, buffer)
-        
-    # 3. Parse notebook config
-    config = extract_notebook_config(nb_path)
-    
     # 4. Parse page numbers
     parsed_pages = parse_page_numbers(pages)
     if not parsed_pages:
@@ -64,16 +55,15 @@ async def start_session(
         run_pipeline,
         session_id=session_id,
         pdf_path=pdf_path,
-        notebook_config=config,
         pages=parsed_pages,
         output_dir=session_dir
     )
     
     return {
         "session_id": session_id,
-        "models_found": config["models_found"],
+        "models_found": ["DocLayoutYOLO", "Nemotron-Parse-v1.1", "ADE-DPT2"],
         "pages": parsed_pages,
-        "landing_ai_key_detected": config["landing_ai_key"] is not None
+        "landing_ai_key_detected": os.environ.get("LANDING_AI_API_KEY") is not None
     }
 
 @app.get("/api/session/{session_id}/status")

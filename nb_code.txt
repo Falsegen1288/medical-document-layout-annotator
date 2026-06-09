@@ -1,0 +1,203 @@
+# ── CELL 12: Readymade evaluation — pyCOTe ────────────────────
+# COTe decomposes spatial quality into 4 interpretable area metrics:
+#   Coverage  (C) — how much of each detected region is covered
+#   Overlap   (O) — redundant double-coverage within a region
+#   Trespass  (T) — how much a box bleeds into neighbouring regions
+#   Excess    (E) — predictions landing in blank/background areas
+#
+# Since we have NO ground truth annotations we treat the two model
+# outputs as mutual references:
+#   Round A : DocLayoutYOLO as reference, Nemotron as prediction
+#   Round B : Nemotron as reference, DocLayoutYOLO as prediction
+# This gives symmetric cross-model spatial agreement scores.
+
+import numpy as np
+from shapely.geometry import box as shapely_box
+from shapely.ops import unary_union
+
+# ── pyCOTe-style COTe implementation ─────────────────────────
+# (pyCOTe's API wraps these same formulae; we implement directly
+#  so the notebook is self-contained and not blocked by install issues)
+
+def bbox_to_mask(bbox, page_w, page_h, scale=1.0):
+    """Rasterise a bbox [x0,y0,x1,y1] to a boolean numpy mask."""
+    h = int(page_h * scale)
+    w = int(page_w * scale)
+    mask = np.zeros((h, w), dtype=bool)
+    x0 = max(0, int(bbox[0] * scale))
+    y0 = max(0, int(bbox[1] * scale))
+    x1 = min(w, int(bbox[2] * scale))
+    y1 = min(h, int(bbox[3] * scale))
+    mask[y0:y1, x0:x1] = True
+    return mask
+
+
+def compute_cote_scores(ref_dets, pred_dets, page_w, page_h, scale=0.2):
+    """
+    Compute COTe metrics treating ref_dets as SSU ground truth
+    and pred_dets as predictions.
+
+    Returns dict with per-class and overall C, O, T, E scores.
+    """
+    if not ref_dets or not pred_dets:
+        return None
+
+    H = int(page_h * scale)
+    W = int(page_w * scale)
+    page_area = H * W
+
+    # Build SSU masks (one per reference detection)
+    ssu_masks  = [bbox_to_mask(d['bbox'], page_w, page_h, scale) for d in ref_dets]
+    pred_masks = [bbox_to_mask(d['bbox'], page_w, page_h, scale) for d in pred_dets]
+
+    # Ground truth combined mask
+    gt_union = np.zeros((H, W), dtype=bool)
+    for m in ssu_masks:
+        gt_union |= m
+
+    # ── Assign each prediction to its best-matching SSU ───────
+    assignments = {}   # pred_idx → ssu_idx
+    for j, pm in enumerate(pred_masks):
+        best_ssu  = -1
+        best_area = 0
+        for i, sm in enumerate(ssu_masks):
+            overlap = int(np.sum(pm & sm))
+            if overlap > best_area:
+                best_area = overlap
+                best_ssu  = i
+        if best_ssu >= 0:
+            assignments[j] = best_ssu
+
+    # ── Coverage (C) ──────────────────────────────────────────
+    # For each SSU: area of SSU covered by its assigned predictions
+    coverage_scores = []
+    for i, sm in enumerate(ssu_masks):
+        ssu_area = int(np.sum(sm))
+        if ssu_area == 0:
+            continue
+        assigned_preds = [j for j, s in assignments.items() if s == i]
+        if not assigned_preds:
+            coverage_scores.append(0.0)
+            continue
+        combined = np.zeros((H, W), dtype=bool)
+        for j in assigned_preds:
+            combined |= pred_masks[j]
+        covered = int(np.sum(sm & combined))
+        coverage_scores.append(covered / ssu_area)
+
+    # ── Overlap (O) ───────────────────────────────────────────
+    # Redundant coverage: multiple preds covering same SSU area
+    overlap_scores = []
+    for i, sm in enumerate(ssu_masks):
+        ssu_area = int(np.sum(sm))
+        if ssu_area == 0:
+            continue
+        assigned_preds = [j for j, s in assignments.items() if s == i]
+        if len(assigned_preds) < 2:
+            overlap_scores.append(0.0)
+            continue
+        combined_union = np.zeros((H, W), dtype=bool)
+        combined_sum   = np.zeros((H, W), dtype=np.int16)
+        for j in assigned_preds:
+            combined_union |= pred_masks[j]
+            combined_sum   += pred_masks[j].astype(np.int16)
+        redundant = int(np.sum(sm & (combined_sum > 1).astype(bool)))
+        overlap_scores.append(redundant / ssu_area)
+
+    # ── Trespass (T) ──────────────────────────────────────────
+    # Each prediction's bleed into OTHER SSUs
+    trespass_scores = []
+    for j, pm in enumerate(pred_masks):
+        if j not in assignments:
+            continue
+        my_ssu  = assignments[j]
+        ssu_area = int(np.sum(ssu_masks[my_ssu]))
+        if ssu_area == 0:
+            continue
+        other_mask = np.zeros((H, W), dtype=bool)
+        for i, sm in enumerate(ssu_masks):
+            if i != my_ssu:
+                other_mask |= sm
+        trespass = int(np.sum(other_mask & pm))
+        trespass_scores.append(trespass / ssu_area)
+
+    # ── Excess (E) ────────────────────────────────────────────
+    # Predictions landing entirely outside all SSUs
+    pred_union = np.zeros((H, W), dtype=bool)
+    for pm in pred_masks:
+        pred_union |= pm
+    non_gt_area = page_area - int(np.sum(gt_union))
+    if non_gt_area > 0:
+        unassigned_pred = pred_union & ~gt_union
+        excess = int(np.sum(unassigned_pred)) / non_gt_area
+    else:
+        excess = 0.0
+
+    return {
+        'Coverage' : float(np.mean(coverage_scores))  if coverage_scores  else 0.0,
+        'Overlap'  : float(np.mean(overlap_scores))   if overlap_scores   else 0.0,
+        'Trespass' : float(np.mean(trespass_scores))  if trespass_scores  else 0.0,
+        'Excess'   : float(excess),
+        'n_ref'    : len(ref_dets),
+        'n_pred'   : len(pred_dets),
+        'n_assigned': len(assignments),
+    }
+
+
+# ── Run COTe for all Nemotron pages ──────────────────────────
+print('='*65)
+print('  📐 pyCOTe-STYLE EVALUATION')
+print('  Cross-model spatial agreement (no ground truth required)')
+print('='*65)
+
+cote_results = {}   # { page: { 'A→B': scores, 'B→A': scores } }
+
+for pg in NEMOTRON_PAGES:
+    img      = page_images[pg]
+    pw, ph   = img.size
+    dl_dets  = docling_results.get(pg, [])
+    nm_dets  = nemotron_results.get(pg, [])
+
+    if not dl_dets or not nm_dets:
+        print(f'\n  Page {pg}: skipped (one model has no detections)')
+        continue
+
+    # Round A: DocLayoutYOLO as SSU reference, Nemotron as prediction
+    scores_a = compute_cote_scores(dl_dets, nm_dets, pw, ph)
+    # Round B: Nemotron as SSU reference, DocLayoutYOLO as prediction
+    scores_b = compute_cote_scores(nm_dets, dl_dets, pw, ph)
+
+    cote_results[pg] = {'DL→NM': scores_a, 'NM→DL': scores_b}
+
+    print(f'\n  ── Page {pg} ({pw}×{ph}px) ──')
+    print(f'  {"Metric":12s}  {"DL as ref (NM pred)":22s}  {"NM as ref (DL pred)":22s}')
+    print(f'  {"-"*12}  {"-"*22}  {"-"*22}')
+    for metric in ['Coverage', 'Overlap', 'Trespass', 'Excess']:
+        va = scores_a[metric]
+        vb = scores_b[metric]
+        print(f'  {metric:12s}  {va:22.4f}  {vb:22.4f}')
+    print(f'  Detections   DL={scores_a["n_ref"]}  NM={scores_a["n_pred"]}  '
+          f'Assigned={scores_a["n_assigned"]}')
+
+# ── Aggregate across pages ────────────────────────────────────
+print('\n' + '='*65)
+print('  AGGREGATE COTe SCORES (mean across all compared pages)')
+print('='*65)
+for direction in ['DL→NM', 'NM→DL']:
+    vals = {m: [] for m in ['Coverage','Overlap','Trespass','Excess']}
+    for pg, res in cote_results.items():
+        for m in vals:
+            vals[m].append(res[direction][m])
+    label = 'DocLayoutYOLO→Nemotron' if direction == 'DL→NM' else 'Nemotron→DocLayoutYOLO'
+    print(f'\n  {label}:')
+    for m, v in vals.items():
+        indicator = ''
+        if m == 'Coverage' and np.mean(v) > 0.7:
+            indicator = '✅ good'
+        elif m == 'Trespass' and np.mean(v) > 0.2:
+            indicator = '⚠️  high — boxes bleeding into neighbours'
+        elif m == 'Overlap' and np.mean(v) > 0.2:
+            indicator = '⚠️  high — duplicate coverage'
+        print(f'    {m:12s}: {np.mean(v):.4f}  {indicator}')
+
+print('\n✅ pyCOTe evaluation complete')

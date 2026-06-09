@@ -29,7 +29,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigateToTab }) => {
   
   const [pageRangeInput, setPageRangeInput] = useState(store.selectedPageRange);
   const [rangeError, setRangeError] = useState<string | null>(null);
-  const [activeStep, setActiveStep] = useState<1 | 2 | 3>(1);
+  const [activeStep, setActiveStep] = useState<1 | 2>(1);
 
   // Auto-scroll terminal logs
   useEffect(() => {
@@ -129,25 +129,21 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigateToTab }) => {
     e.preventDefault();
   };
 
-  const handleDrop = (e: React.DragEvent, type: 'pdf' | 'nb') => {
+  const handleDrop = (e: React.DragEvent, type: 'pdf') => {
     e.preventDefault();
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
       const file = e.dataTransfer.files[0];
       if (type === 'pdf' && file.name.endsWith('.pdf')) {
         store.setPdfFile(file);
-      } else if (type === 'nb' && file.name.endsWith('.ipynb')) {
-        store.setNbFile(file);
       }
     }
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, type: 'pdf' | 'nb') => {
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, type: 'pdf') => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
       if (type === 'pdf') {
         store.setPdfFile(file);
-      } else {
-        store.setNbFile(file);
       }
     }
   };
@@ -173,12 +169,12 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigateToTab }) => {
             <header className="border-b border-border pb-3">
               <h1 className="font-mono text-lg font-bold text-primary uppercase tracking-wider">New Annotation Session</h1>
               <p className="text-xs text-text-muted mt-1 leading-normal">
-                Follow the 3-step setup protocol to run layout predictions on your document.
+                Follow the 2-step setup protocol to run layout predictions on your document.
               </p>
             </header>
 
             {/* Steps Progress Header */}
-            <div className="grid grid-cols-3 gap-2 font-mono text-[10px] uppercase font-semibold">
+            <div className="grid grid-cols-2 gap-2 font-mono text-[10px] uppercase font-semibold">
               <button 
                 onClick={() => setActiveStep(1)}
                 className={`py-2 text-center border-b-2 transition-all ${
@@ -191,19 +187,10 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigateToTab }) => {
                 onClick={() => store.pdfFile && setActiveStep(2)}
                 disabled={!store.pdfFile}
                 className={`py-2 text-center border-b-2 transition-all ${
-                  activeStep === 2 ? 'border-primary text-primary' : store.nbFile ? 'border-primary/40 text-on-surface' : 'border-border text-text-muted disabled:opacity-50'
+                  activeStep === 2 ? 'border-primary text-primary' : 'border-border text-text-muted disabled:opacity-50'
                 }`}
               >
-                2. Notebook
-              </button>
-              <button 
-                onClick={() => store.pdfFile && store.nbFile && setActiveStep(3)}
-                disabled={!store.pdfFile || !store.nbFile}
-                className={`py-2 text-center border-b-2 transition-all ${
-                  activeStep === 3 ? 'border-primary text-primary' : 'border-border text-text-muted disabled:opacity-50'
-                }`}
-              >
-                3. Page Range
+                2. Page Range
               </button>
             </div>
 
@@ -252,60 +239,14 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigateToTab }) => {
                       onClick={() => setActiveStep(2)}
                       className="w-full bg-primary-container text-on-primary-container py-2.5 font-mono text-xs font-bold uppercase tracking-wider hover:brightness-110 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
                     >
-                      Step 2: Upload Notebook <ChevronRight className="w-4 h-4" />
+                      Step 2: Define Page Range <ChevronRight className="w-4 h-4" />
                     </button>
                   )}
                 </div>
               )}
 
-              {/* STEP 2: NOTEBOOK UPLOAD */}
+              {/* STEP 2: PAGE RANGE SELECTOR */}
               {activeStep === 2 && (
-                <div className="space-y-4">
-                  <div 
-                    onDragOver={handleDragOver}
-                    onDrop={(e) => handleDrop(e, 'nb')}
-                    className="border-2 border-dashed border-border hover:border-primary/60 bg-surface-container-low/40 rounded-xs py-8 text-center relative group transition-colors"
-                  >
-                    <input 
-                      type="file" 
-                      accept=".ipynb" 
-                      className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
-                      onChange={(e) => handleFileChange(e, 'nb')}
-                    />
-                    <div className="flex flex-col items-center gap-2">
-                      <Code className="w-10 h-10 text-primary group-hover:scale-105 transition-transform" />
-                      <span className="font-mono text-xs text-on-surface uppercase tracking-wider font-bold">
-                        {store.uploadedNbName ? 'Replace Jupyter Notebook' : 'Upload Evaluation Notebook'}
-                      </span>
-                      <span className="text-[10px] text-text-muted max-w-[280px] leading-normal">
-                        Accepts .ipynb cells specifying model configurations.
-                      </span>
-                    </div>
-                  </div>
-
-                  {store.nbFile && (
-                    <div className="bg-surface-container border border-border p-3 flex justify-between items-center font-mono text-xs">
-                      <div className="flex items-center gap-2 text-primary">
-                        <Code className="w-4 h-4" />
-                        <span className="truncate max-w-[320px] font-bold">{store.uploadedNbName}</span>
-                      </div>
-                      <span className="text-[10px] text-text-muted">Parsed Cell Configs</span>
-                    </div>
-                  )}
-
-                  {store.nbFile && (
-                    <button 
-                      onClick={() => setActiveStep(3)}
-                      className="w-full bg-primary-container text-on-primary-container py-2.5 font-mono text-xs font-bold uppercase tracking-wider hover:brightness-110 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
-                    >
-                      Step 3: Define Page Range <ChevronRight className="w-4 h-4" />
-                    </button>
-                  )}
-                </div>
-              )}
-
-              {/* STEP 3: PAGE RANGE SELECTOR */}
-              {activeStep === 3 && (
                 <div className="space-y-4">
                   <div className="flex flex-col gap-1.5">
                     <label className="font-mono text-[10px] text-text-muted uppercase tracking-wider font-bold">

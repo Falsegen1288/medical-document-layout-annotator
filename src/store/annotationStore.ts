@@ -28,10 +28,8 @@ interface AnnotationState {
   
   // Intake configuration
   pdfFile: File | null;
-  nbFile: File | null;
   selectedPageRange: string;
   uploadedPdfName: string;
-  uploadedNbName: string;
   pdfPageCount: number | null;
   
   // Toast notifications & Undo
@@ -41,7 +39,6 @@ interface AnnotationState {
   
   // Actions
   setPdfFile: (file: File) => void;
-  setNbFile: (file: File) => void;
   setSelectedPageRange: (range: string) => void;
   startPipeline: () => Promise<void>;
   connectSSE: (sessionId: string) => void;
@@ -84,10 +81,8 @@ export const useAnnotationStore = create<AnnotationState>((set, get) => {
     pipelineLogs: [],
     
     pdfFile: null,
-    nbFile: null,
     selectedPageRange: '',
     uploadedPdfName: '',
-    uploadedNbName: '',
     pdfPageCount: null,
     
     undoStack: [],
@@ -104,12 +99,7 @@ export const useAnnotationStore = create<AnnotationState>((set, get) => {
       });
     },
     
-    setNbFile: (file: File) => {
-      set({
-        nbFile: file,
-        uploadedNbName: file.name
-      });
-    },
+
     
     setSelectedPageRange: (range: string) => {
       set({ selectedPageRange: range });
@@ -117,8 +107,8 @@ export const useAnnotationStore = create<AnnotationState>((set, get) => {
     
     // Session pipeline triggers
     startPipeline: async () => {
-      const { pdfFile, nbFile, selectedPageRange } = get();
-      if (!pdfFile || !nbFile || !selectedPageRange) return;
+      const { pdfFile, selectedPageRange } = get();
+      if (!pdfFile || !selectedPageRange) return;
       
       set({ 
         isUploading: true, 
@@ -143,7 +133,6 @@ export const useAnnotationStore = create<AnnotationState>((set, get) => {
       try {
         const formData = new FormData();
         formData.append('pdf', pdfFile);
-        formData.append('notebook', nbFile);
         formData.append('pages', selectedPageRange);
         
         const response = await fetch(`${BACKEND_URL}/api/session/start`, {
@@ -566,10 +555,8 @@ export const useAnnotationStore = create<AnnotationState>((set, get) => {
         pipelineLogs: [],
         
         pdfFile: null,
-        nbFile: null,
         selectedPageRange: '',
         uploadedPdfName: '',
-        uploadedNbName: '',
         pdfPageCount: null,
         
         undoStack: [],
