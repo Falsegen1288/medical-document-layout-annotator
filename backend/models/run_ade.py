@@ -45,13 +45,14 @@ def run_ade_dpt2(page_images: dict, api_key: str, config: dict) -> dict:
     # Check if API key is provided
     if not api_key:
         import os
-        api_key = os.environ.get("LANDING_AI_API_KEY", "")
-        
-    if not api_key:
-        print("Warning: LandingAI API Key not set. Running ADE-DPT2 fallback mock.")
-        return get_ade_mock_fallback(page_images.keys(), page_images)
+        from dotenv import load_dotenv
+        load_dotenv()
+        api_key = os.getenv("LANDING_AI_KEY") or os.getenv("LANDING_AI_API_KEY", "")
         
     try:
+        if not api_key:
+            raise RuntimeError("LANDING_AI_KEY not set in .env file.")
+            
         from landingai_ade import LandingAIADE
         
         print(f"Connecting to LandingAI ADE DPT-2 client...")

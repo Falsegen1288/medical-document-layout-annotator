@@ -36,7 +36,14 @@ def run_nemotron(page_images: dict, pages: list, config: dict) -> dict:
         import torch
         from transformers import AutoModel, AutoProcessor, AutoTokenizer, GenerationConfig
         
-        device = 'cuda' if torch.cuda.is_available() else 'cpu'
+        if torch.cuda.is_available():
+            device = 'cuda'
+            print(f"Using GPU: {torch.cuda.get_device_name(0)}")
+            print(f"VRAM available: {torch.cuda.get_device_properties(0).total_memory / 1e9:.1f} GB")
+        else:
+            device = 'cpu'
+            print("WARNING: CUDA not available, falling back to CPU (very slow)")
+
         model_name = config.get('nemotron_model', 'nvidia/NVIDIA-Nemotron-Parse-v1.1')
         
         print(f"Loading Nemotron Model ({model_name}) on device: {device}...")
@@ -45,13 +52,13 @@ def run_nemotron(page_images: dict, pages: list, config: dict) -> dict:
         model = AutoModel.from_pretrained(
             model_name,
             trust_remote_code=True,
-            torch_dtype=torch.float16 if device == 'cuda' else torch.float32,
+            dtype=torch.float16 if device == 'cuda' else torch.float32,
             low_cpu_mem_usage=True
         ).to(device).eval()
         
         processor = AutoProcessor.from_pretrained(model_name, trust_remote_code=True)
         gen_config = GenerationConfig.from_pretrained(model_name, trust_remote_code=True)
-        gen_config.max_new_tokens = 1024
+        gen_config.max_new_tokens = 512
         
         print(f"Nemotron loaded in {time.time() - t0:.2f}s")
         
@@ -68,8 +75,16 @@ def run_nemotron(page_images: dict, pages: list, config: dict) -> dict:
             
             print(f"Running Nemotron on Page {pg} (pad_x={pad_x:.1f}, pad_y={pad_y:.1f})...")
             
+            # Clear GPU cache before page inference
+            if device == 'cuda':
+                torch.cuda.empty_cache()
+                torch.cuda.ipc_collect()
+                
             # Use PyTorch autocast if CUDA is active
-            autocast_context = torch.cuda.amp.autocast(dtype=torch.float16) if device == 'cuda' else torch.cpu.amp.autocast()
+            if device == 'cuda':
+                autocast_context = torch.amp.autocast('cuda', dtype=torch.float16)
+            else:
+                autocast_context = torch.amp.autocast('cpu', dtype=torch.bfloat16)
             
             inputs = processor(
                 images=[img],
@@ -78,15 +93,28 @@ def run_nemotron(page_images: dict, pages: list, config: dict) -> dict:
                 add_special_tokens=False
             ).to(device)
             
-            with torch.no_grad(), autocast_context:
-                outputs = model.generate(**inputs, generation_config=gen_config)
-                
+            # Run model generation with OOM guard
+            try:
+                with torch.no_grad(), autocast_context:
+                    outputs = model.generate(**inputs, generation_config=gen_config)
+            except torch.cuda.OutOfMemoryError:
+                if device == 'cuda':
+                    torch.cuda.empty_cache()
+                    torch.cuda.ipc_collect()
+                    print(f"OOM on page {pg} — reducing max_new_tokens and retrying...")
+                    gen_config.max_new_tokens = 256
+                    with torch.no_grad(), autocast_context:
+                        outputs = model.generate(**inputs, generation_config=gen_config)
+                else:
+                    raise
+                    
             generated_text = processor.batch_decode(outputs, skip_special_tokens=True)[0]
             
-            # Free memory
+            # Free memory immediately
             del inputs, outputs
             if device == 'cuda':
                 torch.cuda.empty_cache()
+                torch.cuda.ipc_collect()
                 
             dets = []
             for match in BLOCK_PATTERN.finditer(generated_text):
@@ -130,8 +158,16 @@ def run_nemotron(page_images: dict, pages: list, config: dict) -> dict:
                 })
             results[pg] = dets
             
+    except ImportError as e:
+        raise RuntimeError(
+            f"Nemotron requires albumentations or other missing dependencies: pip install albumentations==2.0.8. "
+            f"Original error: {e}"
+        )
     except Exception as e:
-        print(f"Failed to run Nemotron inference: {e}. Falling back to baseline detections.")
+        import traceback
+        print(f"Failed to run Nemotron inference: {e}")
+        traceback.print_exc()
+        print("Falling back to baseline detections.")
         # Fallback to mock data for target pages
         results = get_nemotron_mock_fallback(pages, page_images, nemotron_pages)
         

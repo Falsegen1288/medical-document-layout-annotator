@@ -21,7 +21,7 @@ interface AnnotateProps {
   onNavigateToTab: (tab: 'dashboard' | 'annotate' | 'compare' | 'export') => void;
 }
 
-const BACKEND_URL = 'http://localhost:8000';
+const BACKEND_URL = 'http://127.0.0.1:8000';
 
 export const Annotate: React.FC<AnnotateProps> = ({ onNavigateToTab }) => {
   const store = useAnnotationStore();

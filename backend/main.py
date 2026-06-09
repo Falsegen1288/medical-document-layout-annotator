@@ -1,4 +1,7 @@
+import backend.patch_transformers
 import os
+from dotenv import load_dotenv
+load_dotenv()
 import json
 import uuid
 import asyncio
@@ -76,18 +79,31 @@ async def get_status_stream(session_id: str):
         
     async def event_generator():
         last_idx = 0
-        while True:
-            # Yield any new progress logs
-            if last_idx < len(sessions_progress[session_id]):
-                for i in range(last_idx, len(sessions_progress[session_id])):
-                    data = sessions_progress[session_id][i]
-                    yield f"data: {json.dumps(data)}\n\n"
+        try:
+            while True:
+                # Yield any new progress logs
+                if last_idx < len(sessions_progress[session_id]):
+                    for i in range(last_idx, len(sessions_progress[session_id])):
+                        data = sessions_progress[session_id][i]
+                        yield f"data: {json.dumps(data)}\n\n"
+                        
+                        if data.get("step") in ["complete", "error"]:
+                            await asyncio.sleep(0.5)
+                            return
+                    last_idx = len(sessions_progress[session_id])
                     
-                    if data.get("step") in ["complete", "error"]:
-                        return
-                last_idx = len(sessions_progress[session_id])
-                
-            await asyncio.sleep(0.5)
+                await asyncio.sleep(0.5)
+        except Exception as e:
+            import traceback
+            err_data = {
+                "step": "error",
+                "message": f"Status stream error: {str(e)}",
+                "traceback": traceback.format_exc(),
+                "percent": -1
+            }
+            yield f"data: {json.dumps(err_data)}\n\n"
+        finally:
+            return
             
     return StreamingResponse(event_generator(), media_type="text/event-stream")
 

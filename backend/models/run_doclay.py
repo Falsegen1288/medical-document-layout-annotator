@@ -9,13 +9,31 @@ def run_doclayoutyolo(pdf_path: str, page_images: dict, pages: list, config: dic
     results = {pg: [] for pg in pages}
     
     try:
+        import os
+        import fitz
         from docling.document_converter import DocumentConverter, PdfFormatOption
         from docling.datamodel.base_models import InputFormat
         from docling.datamodel.pipeline_options import PdfPipelineOptions
         
+        # 1. Create a sliced PDF of ONLY the requested pages to save RAM and CPU
+        output_dir = os.path.dirname(pdf_path)
+        sliced_pdf_path = os.path.join(output_dir, "sliced_doclay_input.pdf")
+        
+        print(f"Slicing PDF to include only pages: {pages}...")
+        doc = fitz.open(pdf_path)
+        new_doc = fitz.open()
+        for pg in pages:
+            if 1 <= pg <= len(doc):
+                new_doc.insert_pdf(doc, from_page=pg - 1, to_page=pg - 1)
+        new_doc.save(sliced_pdf_path)
+        new_doc.close()
+        doc.close()
+        
+        # 2. Run docling on the sliced PDF
         print("Initializing Docling DocumentConverter...")
         pipeline_options = PdfPipelineOptions()
-        pipeline_options.do_table_structure = True
+        pipeline_options.do_ocr = False
+        pipeline_options.do_table_structure = False
         
         converter = DocumentConverter(
             format_options={
@@ -23,12 +41,19 @@ def run_doclayoutyolo(pdf_path: str, page_images: dict, pages: list, config: dic
             }
         )
         
-        print(f"Running Docling layout converter on {pdf_path}...")
+        print(f"Running Docling layout converter on sliced PDF: {sliced_pdf_path}...")
         t0 = time.time()
-        result = converter.convert(pdf_path)
+        result = converter.convert(sliced_pdf_path)
         doc_obj = result.document
         print(f"Docling finished in {time.time() - t0:.2f}s")
         
+        # Clean up the sliced PDF file immediately
+        try:
+            if os.path.exists(sliced_pdf_path):
+                os.remove(sliced_pdf_path)
+        except Exception as cleanup_err:
+            print(f"Failed to remove temporary sliced PDF: {cleanup_err}")
+            
         label_map = {
             'text': 'text',
             'sectionheader': 'section_header',
@@ -49,9 +74,13 @@ def run_doclayoutyolo(pdf_path: str, page_images: dict, pages: list, config: dic
             if not hasattr(item, 'prov') or not item.prov:
                 continue
             prov = item.prov[0]
-            pg_num = prov.page_no # docling page numbers are 1-based (usually matched to pdf)
+            # Since we converted sliced_pdf_path, prov.page_no is a 1-based index in the sliced PDF
+            sliced_pg_num = prov.page_no
             
-            if pg_num not in pages:
+            # Map back to the original page index
+            if 1 <= sliced_pg_num <= len(pages):
+                pg_num = pages[sliced_pg_num - 1]
+            else:
                 continue
                 
             bbox = prov.bbox # docling coordinates
@@ -63,7 +92,8 @@ def run_doclayoutyolo(pdf_path: str, page_images: dict, pages: list, config: dic
                 continue
                 
             try:
-                page_info = doc_obj.pages.get(pg_num)
+                # In doc_obj, pages are keys 1, 2, 3... corresponding to the sliced PDF
+                page_info = doc_obj.pages.get(sliced_pg_num)
                 if page_info and page_info.size:
                     pw_pt = page_info.size.width
                     ph_pt = page_info.size.height
@@ -100,7 +130,12 @@ def run_doclayoutyolo(pdf_path: str, page_images: dict, pages: list, config: dic
                 })
             except Exception as e:
                 print(f"Error parsing item bbox: {e}")
-                continue
+        # Diagnostic print for coordinates verification
+        for pg_num, dets in results.items():
+            if dets:
+                img = page_images.get(pg_num)
+                img_size = img.size if hasattr(img, 'size') else (img.width, img.height) if img else (0, 0)
+                print(f"Page {pg_num}: first bbox = {dets[0]['bbox']}, image size expected = {img_size}")
                 
     except Exception as e:
         print(f"Failed to run Docling converter: {e}. Falling back to default baseline detections.")

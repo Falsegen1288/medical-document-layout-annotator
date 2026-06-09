@@ -6,23 +6,23 @@
   -- Page 7 (1275x1650px) --
   Metric        DL as ref (NM pred)     NM as ref (DL pred)   
   ------------  ----------------------  ----------------------
-  Coverage                      0.7143                  0.9868
+  Coverage                      0.7906                  0.7158
   Overlap                       0.0000                  0.0000
-  Trespass                      0.0000                  0.0000
-  Excess                        0.0078                  0.1416
+  Trespass                      0.0036                  0.0000
+  Excess                        0.0758                  0.3445
 
 =================================================================
   AGGREGATE COTe SCORES (mean across all compared pages)
 =================================================================
 
   DocLayoutYOLO->Nemotron:
-    Coverage    : 0.7143  ✅ good
+    Coverage    : 0.7906  ✅ good
     Overlap     : 0.0000  
-    Trespass    : 0.0000  
-    Excess      : 0.0078  
+    Trespass    : 0.0036  
+    Excess      : 0.0758  
 
   Nemotron->DocLayoutYOLO:
-    Coverage    : 0.9868  ✅ good
+    Coverage    : 0.7158  ✅ good
     Overlap     : 0.0000  
     Trespass    : 0.0000  
-    Excess      : 0.1416  
+    Excess      : 0.3445  

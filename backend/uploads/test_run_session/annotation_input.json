@@ -1,6 +1,7 @@
 {
   "7": {
     "page": 7,
+    "displayName": "Page 7",
     "image_path": "/api/images/test_run_session/page_07_original.png",
     "image_size": [
       1275,
@@ -10,80 +11,113 @@
       "name": "DocLayoutYOLO",
       "detections": [
         {
-          "type": "title",
-          "bbox": [
-            120.0,
-            80.0,
-            1150.0,
-            170.0
-          ],
-          "text": "Mock YOLO text on page 7",
-          "model": "DocLayoutYOLO"
-        },
-        {
           "type": "section_header",
           "bbox": [
-            120.0,
-            190.0,
-            700.0,
-            230.0
+            112.50000000000001,
+            120.32437499999986,
+            1141.174791666668,
+            157.63093850053357
           ],
-          "text": "Mock YOLO text on page 7",
+          "text": "PILLING \u00ae  AND KMEDIC \u00ae  SURGICAL INSTRUMENTS",
           "model": "DocLayoutYOLO"
         },
         {
           "type": "text",
           "bbox": [
-            120.0,
-            270.0,
-            600.0,
-            510.0
+            112.50000000000001,
+            166.19937500000006,
+            552.4,
+            195.84630718514524
           ],
-          "text": "Mock YOLO text on page 7",
+          "text": "Quality that builds confidence",
           "model": "DocLayoutYOLO"
         },
         {
           "type": "text",
           "bbox": [
-            120.0,
-            530.0,
-            600.0,
-            840.0
+            112.49541666666664,
+            300.7310416666667,
+            592.2047916666668,
+            480.0772544001438
           ],
-          "text": "Mock YOLO text on page 7",
+          "text": "For nearly 200 years, Pilling \u00ae  quality instruments have been provided to surgeons across the world to help improve the standard of patient care. The Pilling \u00ae Brand is especially known globally in t",
           "model": "DocLayoutYOLO"
         },
         {
           "type": "text",
           "bbox": [
-            650.0,
-            270.0,
-            1150.0,
-            490.0
+            112.49541666666664,
+            499.64770833333324,
+            583.3135416666669,
+            706.0522544001433
           ],
-          "text": "Mock YOLO text on page 7",
+          "text": "George P. Pilling joined a company started in 1814 that fashioned jewelry and fraternal emblems and guided the business into a new role. As hospitals in the Philadelphia, Pennsylvania area needed new ",
           "model": "DocLayoutYOLO"
         },
         {
           "type": "text",
           "bbox": [
-            650.0,
-            510.0,
-            1150.0,
-            740.0
+            112.49541666666664,
+            725.6227083333329,
+            576.1981249999993,
+            823.8439210668103
           ],
-          "text": "Mock YOLO text on page 7",
+          "text": "Today, the Pilling \u00ae  Brand is an important part of the Teleflex \u00ae  Brand portfolio, and continues its legacy in providing high quality, hand-crafted instrumentation that meets the surgeon's requireme",
           "model": "DocLayoutYOLO"
         },
         {
           "type": "picture",
           "bbox": [
-            150.0,
-            870.0,
-            1120.0,
-            1545.0
+            172.83859252929688,
+            841.6160583496094,
+            1089.9150848388672,
+            1430.2104949951172
           ],
-          "text": "Mock YOLO text on page 7",
+          "text": "",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "picture",
+          "bbox": [
+            1007.3632558186849,
+            1576.6251881917317,
+            1121.742884318034,
+            1620.5057779947915
+          ],
+          "text": "",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            628.11875,
+            300.71437499999973,
+            1094.3431249999999,
+            453.0189210668105
+          ],
+          "text": "Over the years, the Pilling \u00ae  Brand has maintained high standards of quality and continues to emphasize customer service and satisfaction. As surgical procedural needs change, specialty surgeons can ",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            628.1266666666667,
+            472.58937499999996,
+            1085.736041666667,
+            651.9605877334769
+          ],
+          "text": "KMedic \u00ae , another member of the Teleflex \u00ae  Family of brands, offers the most extensive line of orthopedic instruments with more than 2,000 patterns. Just like our Pilling \u00ae  brand, our KMedic \u00ae  Lin",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            1216.3583333333333,
+            1586.2497916666666,
+            1227.9416666666666,
+            1604.9030734169335
+          ],
+          "text": "7",
           "model": "DocLayoutYOLO"
         }
       ]
@@ -92,59 +126,103 @@
       "name": "Nemotron-Parse-v1.1",
       "detections": [
         {
-          "type": "title",
+          "type": "Page-header",
           "bbox": [
-            115.0,
-            82.0,
-            1160.0,
-            175.0
+            1232.9224,
+            87.31040000000002,
+            1257.148,
+            332.25120000000004
           ],
-          "text": "Mock Nemotron parsed text on page 7",
-          "model": "Nemotron-Parse-v1.1"
+          "text": "GENERAL INFORMATION",
+          "model": "Nemotron"
         },
         {
-          "type": "text",
+          "type": "Title",
           "bbox": [
-            120.0,
-            270.0,
-            600.0,
-            510.0
+            106.34960000000001,
+            114.54880000000003,
+            1141.2936,
+            156.1232
           ],
-          "text": "Mock Nemotron parsed text on page 7",
-          "model": "Nemotron-Parse-v1.1"
+          "text": "# PILLING<sup>\u00ae</sup> AND KMEDIC<sup>\u00ae</sup> SURGICAL INSTRUMENTS",
+          "model": "Nemotron"
         },
         {
-          "type": "text",
+          "type": "Section-header",
           "bbox": [
-            120.0,
-            530.0,
-            600.0,
-            840.0
+            107.99759999999998,
+            162.67680000000001,
+            552.1336,
+            197.9024
           ],
-          "text": "Mock Nemotron parsed text on page 7",
-          "model": "Nemotron-Parse-v1.1"
+          "text": "Quality that builds confidence",
+          "model": "Nemotron"
         },
         {
-          "type": "text",
+          "type": "Text",
           "bbox": [
-            650.0,
-            270.0,
-            1150.0,
-            490.0
+            109.6456,
+            293.7488,
+            589.2136,
+            479.2976
           ],
-          "text": "Mock Nemotron parsed text on page 7",
-          "model": "Nemotron-Parse-v1.1"
+          "text": "For nearly 200 years, Pilling<sup>\u00ae</sup> quality instruments have been provided to surgeons across the world to help improve the standard of patient care. The Pilling<sup>\u00ae</sup> Brand is especially ",
+          "model": "Nemotron"
         },
         {
-          "type": "picture",
+          "type": "Text",
           "bbox": [
-            150.0,
-            870.0,
-            1120.0,
-            1545.0
+            109.6456,
+            493.8384,
+            582.7864,
+            704.9872
           ],
-          "text": "Mock Nemotron parsed text on page 7",
-          "model": "Nemotron-Parse-v1.1"
+          "text": "George P. Pilling joined a company started in 1814 that fashioned jewelry and fraternal emblems and guided the business into a new role. As hospitals in the Philadelphia, Pennsylvania area needed new ",
+          "model": "Nemotron"
+        },
+        {
+          "type": "Text",
+          "bbox": [
+            109.6456,
+            720.9616,
+            573.0631999999999,
+            825.0
+          ],
+          "text": "Today, the Pilling<sup>\u00ae</sup> Brand is an important part of the Teleflex<sup>\u00ae</sup> Brand portfolio, and continues its legacy in providing high quality, hand-crafted instrumentation that meets the s",
+          "model": "Nemotron"
+        },
+        {
+          "type": "Text",
+          "bbox": [
+            624.6456000000001,
+            295.3872,
+            1089.7112,
+            453.69759999999997
+          ],
+          "text": "Over the years, the Pilling<sup>\u00ae</sup> Brand has maintained high standards of quality and continues to emphasize customer service and satisfaction. As surgical procedural needs change, specialty surg",
+          "model": "Nemotron"
+        },
+        {
+          "type": "Text",
+          "bbox": [
+            622.9976,
+            468.23839999999996,
+            1083.2839999999999,
+            652.1488
+          ],
+          "text": "KMedic<sup>\u00ae</sup>, another member of the Teleflex<sup>\u00ae</sup> Family of brands, offers the most extensive line of orthopedic instruments with more than 2,000 patterns. Just like our Pilling<sup>\u00ae</su",
+          "model": "Nemotron"
+        },
+        {
+          "type": "Page-footer",
+          "bbox": [
+            93.49520000000001,
+            1575.3872,
+            1231.4392,
+            1621.8768
+          ],
+          "text": "PILLINGINSTRUMENTS.COM TOLL FREE: 866.246.6990 CS@TELEFLEX.COM 7",
+          "model": "Nemotron"
         }
       ]
     },

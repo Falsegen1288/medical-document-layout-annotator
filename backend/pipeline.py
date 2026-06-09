@@ -1,3 +1,4 @@
+import backend.patch_transformers
 import os
 import time
 import asyncio
@@ -95,7 +96,19 @@ def run_pipeline(session_id: str, pdf_path: str, pages: list, output_dir: str):
         time.sleep(0.1)
         
         # Run layout converter once for all pages
-        dl_results = run_doclayoutyolo(pdf_path, page_images, pages, {"config": {"min_bbox_area": 100}})
+        try:
+            dl_results = run_doclayoutyolo(pdf_path, page_images, pages, {"config": {"min_bbox_area": 100}})
+            if dl_results is None:
+                raise ValueError("DocLayoutYOLO processing failed.")
+        except Exception as e:
+            import traceback
+            log_progress({
+                "step": "error",
+                "message": f"DocLayoutYOLO failed: {str(e)}",
+                "traceback": traceback.format_exc(),
+                "percent": -1
+            })
+            return
         
         for idx, pg in enumerate(pages):
             log_progress({
@@ -114,7 +127,19 @@ def run_pipeline(session_id: str, pdf_path: str, pages: list, output_dir: str):
         time.sleep(0.1)
         
         # Run Nemotron once for all pages
-        nm_results = run_nemotron(page_images, pages, {"config": {"min_bbox_area": 100}})
+        try:
+            nm_results = run_nemotron(page_images, pages, {"config": {"min_bbox_area": 100}})
+            if nm_results is None:
+                raise ValueError("Nemotron-Parse processing failed.")
+        except Exception as e:
+            import traceback
+            log_progress({
+                "step": "error",
+                "message": f"Nemotron-Parse failed: {str(e)}",
+                "traceback": traceback.format_exc(),
+                "percent": -1
+            })
+            return
         
         nemotron_pages = [7, 15, 17, 19, 25]
         for idx, pg in enumerate(pages):
@@ -143,8 +168,19 @@ def run_pipeline(session_id: str, pdf_path: str, pages: list, output_dir: str):
         time.sleep(0.1)
         
         # Run ADE-DPT2 once for all pages
-        # The API key can be fetched from os.environ or left None for the mock fallback
-        ade_results = run_ade_dpt2(page_paths, os.environ.get("LANDING_AI_API_KEY"), {"config": {"min_bbox_area": 100}})
+        try:
+            ade_results = run_ade_dpt2(page_paths, os.environ.get("LANDING_AI_API_KEY"), {"config": {"min_bbox_area": 100}})
+            if ade_results is None:
+                raise ValueError("ADE-DPT2 processing failed.")
+        except Exception as e:
+            import traceback
+            log_progress({
+                "step": "error",
+                "message": f"ADE-DPT2 failed: {str(e)}",
+                "traceback": traceback.format_exc(),
+                "percent": -1
+            })
+            return
         
         for idx, pg in enumerate(pages):
             log_progress({
@@ -177,6 +213,7 @@ def run_pipeline(session_id: str, pdf_path: str, pages: list, output_dir: str):
             img = page_images[pg]
             annotation_input[str(pg)] = {
                 "page": pg,
+                "displayName": f"Page {pg}",
                 "image_path": f"/api/images/{session_id}/page_{pg:02d}_original.png",
                 "image_size": [img.width, img.height],
                 "model_a": {

@@ -1,0 +1,60 @@
+=================================================================
+  pyCOTe-STYLE EVALUATION
+  Cross-model spatial agreement (no ground truth required)
+=================================================================
+
+  -- Page 7 (1275x1650px) --
+  Metric        DL as ref (NM pred)     NM as ref (DL pred)   
+  ------------  ----------------------  ----------------------
+  Coverage                      0.4685                  0.6865
+  Overlap                       0.0000                  0.0000
+  Trespass                      0.1526                  0.0058
+  Excess                        0.2532                  0.1370
+
+  -- Page 15 (1275x1650px) --
+  Metric        DL as ref (NM pred)     NM as ref (DL pred)   
+  ------------  ----------------------  ----------------------
+  Coverage                      0.0220                  0.2649
+  Overlap                       0.0000                  0.0000
+  Trespass                      0.0001                  0.2165
+  Excess                        0.0921                  0.3380
+
+  -- Page 17 (1275x1650px) --
+  Metric        DL as ref (NM pred)     NM as ref (DL pred)   
+  ------------  ----------------------  ----------------------
+  Coverage                      0.0118                  0.4054
+  Overlap                       0.0000                  0.0140
+  Trespass                      0.4711                  0.0000
+  Excess                        0.4483                  0.0907
+
+  -- Page 19 (1275x1650px) --
+  Metric        DL as ref (NM pred)     NM as ref (DL pred)   
+  ------------  ----------------------  ----------------------
+  Coverage                      0.1775                  0.2028
+  Overlap                       0.0000                  0.0003
+  Trespass                      0.0019                  0.5609
+  Excess                        0.2091                  0.3226
+
+  -- Page 25 (1275x1650px) --
+  Metric        DL as ref (NM pred)     NM as ref (DL pred)   
+  ------------  ----------------------  ----------------------
+  Coverage                      0.0522                  0.3792
+  Overlap                       0.0000                  0.0903
+  Trespass                      0.1550                  0.0016
+  Excess                        0.1215                  0.1966
+
+=================================================================
+  AGGREGATE COTe SCORES (mean across all compared pages)
+=================================================================
+
+  DocLayoutYOLO->Nemotron:
+    Coverage    : 0.1464  
+    Overlap     : 0.0000  
+    Trespass    : 0.1561  
+    Excess      : 0.2248  
+
+  Nemotron->DocLayoutYOLO:
+    Coverage    : 0.3878  
+    Overlap     : 0.0209  
+    Trespass    : 0.1570  
+    Excess      : 0.2170  

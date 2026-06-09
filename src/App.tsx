@@ -99,8 +99,8 @@ function MainAppShell() {
           </button>
           <div className="h-5 w-px bg-border"></div>
           <div className="flex items-center gap-1.5 text-on-surface-variant">
-            <Settings className="w-4 h-4 hover:text-primary cursor-pointer transition-colors" title="Settings" />
-            <HelpCircle className="w-4 h-4 hover:text-primary cursor-pointer transition-colors" title="Help Guide" />
+            <span title="Settings" className="flex"><Settings className="w-4 h-4 hover:text-primary cursor-pointer transition-colors" /></span>
+            <span title="Help Guide" className="flex"><HelpCircle className="w-4 h-4 hover:text-primary cursor-pointer transition-colors" /></span>
           </div>
         </div>
       </header>

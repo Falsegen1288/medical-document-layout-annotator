@@ -17,7 +17,7 @@ import {
   Thermometer
 } from 'lucide-react';
 
-const BACKEND_URL = 'http://localhost:8000';
+const BACKEND_URL = 'http://127.0.0.1:8000';
 
 interface DashboardProps {
   onNavigateToTab: (tab: 'dashboard' | 'annotate' | 'compare' | 'export') => void;
@@ -37,6 +37,13 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigateToTab }) => {
       terminalEndRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   }, [store.pipelineLogs]);
+
+  // Automatically navigate to active workspace when pipeline succeeds
+  useEffect(() => {
+    if (store.status === 'results' && store.pages.length > 0) {
+      onNavigateToTab('annotate');
+    }
+  }, [store.status, store.pages.length, onNavigateToTab]);
 
   // Sync state range input with store
   useEffect(() => {
