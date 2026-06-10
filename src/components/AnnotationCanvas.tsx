@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect, useState, useCallback } from 'react';
 import { Detection, CLASS_COLORS, CLASS_LABELS, DocLayClass } from '../types';
 import { useAnnotation } from '../context/AnnotationContext';
 import { Maximize, Minimize, RotateCcw, Move, PenTool, Check } from 'lucide-react';
@@ -12,51 +12,28 @@ export const AnnotationCanvas: React.FC<AnnotationCanvasProps> = ({ detections, 
   const { hoveredDetectionIndex, setHoveredDetectionIndex, addDetection, activeModelTab } = useAnnotation();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const [image, setImage] = useState<HTMLImageElement | null>(null);
+  const imageRef = useRef<HTMLImageElement | null>(null);
+  const [imgReady, setImgReady] = useState(false);
   const [loading, setLoading] = useState<boolean>(true);
 
   // Mode: 'pan' or 'draw'
   const [canvasMode, setCanvasMode] = useState<'pan' | 'draw'>('pan');
   const [selectedDrawClass, setSelectedDrawClass] = useState<DocLayClass>('text');
 
-  // Zoom and Pan States
-  const [scale, setScale] = useState<number>(1);
-  const [offset, setOffset] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
-  const [isPanning, setIsPanning] = useState<boolean>(false);
-  const [panStart, setPanStart] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
+  // Zoom and Pan stored in useRef (no re-render triggers)
+  const zoom = useRef<number>(1);
+  const panX = useRef<number>(0);
+  const panY = useRef<number>(0);
+  const [zoomDisplay, setZoomDisplay] = useState<number>(100);
 
   // Drawing States
   const [isDrawing, setIsDrawing] = useState<boolean>(false);
   const [drawStart, setDrawStart] = useState<{ x: number; y: number } | null>(null);
   const [drawingBbox, setDrawingBbox] = useState<[number, number, number, number] | null>(null);
 
-  // Load Image
-  useEffect(() => {
-    setLoading(true);
-    const img = new Image();
-    img.onload = () => {
-      setImage(img);
-      setLoading(false);
-      resetZoom(img);
-    };
-    img.onerror = (e) => {
-      console.error('Failed to load canvas image:', imagePath, e);
-      setLoading(false);
-    };
-    img.src = imagePath;
-  }, [imagePath]);
-
-  // Console debug overlay to trace canvas dimensions and scaling values
-  useEffect(() => {
-    console.group('AnnotationCanvas render debug');
-    console.log('imagePath:', imagePath);
-    console.log('imageLoaded:', !!image);
-    console.log('detections:', detections?.length);
-    const canvas = canvasRef.current;
-    console.log('canvas size:', canvas ? `${canvas.width}x${canvas.height}` : 'null');
-    console.log('scale:', scale, 'offset:', offset);
-    console.groupEnd();
-  });
+  // Interaction state
+  const isDragging = useRef<boolean>(false);
+  const lastWheel = useRef<number>(0);
 
   // Handle ResizeObserver
   const [resizedDimensions, setResizedDimensions] = useState({ width: 600, height: 750 });
@@ -74,8 +51,28 @@ export const AnnotationCanvas: React.FC<AnnotationCanvasProps> = ({ detections, 
     return () => observer.disconnect();
   }, []);
 
+  // EFFECT 1: Load image ONCE when imagePath changes, store in useRef
+  useEffect(() => {
+    if (!imagePath) return;
+    setImgReady(false);
+    setLoading(true);
+
+    const img = new Image();
+    img.onload = () => {
+      imageRef.current = img;
+      setImgReady(true);
+      setLoading(false);
+      resetZoom(img);
+    };
+    img.onerror = (e) => {
+      console.error('Failed to load canvas image:', imagePath, e);
+      setLoading(false);
+    };
+    img.src = imagePath;
+  }, [imagePath]);
+
   const resetZoom = (loadedImg?: HTMLImageElement) => {
-    const activeImage = loadedImg || image;
+    const activeImage = loadedImg || imageRef.current;
     if (!activeImage || !containerRef.current) return;
 
     const w = containerRef.current.clientWidth || 600;
@@ -85,28 +82,29 @@ export const AnnotationCanvas: React.FC<AnnotationCanvasProps> = ({ detections, 
     const scaleY = (h - 60) / activeImage.height;
     const fitScale = Math.min(scaleX, scaleY, 1);
 
-    setScale(fitScale);
-    setOffset({
-      x: (w - activeImage.width * fitScale) / 2,
-      y: (h - activeImage.height * fitScale) / 2
-    });
+    zoom.current = fitScale;
+    panX.current = (w - activeImage.width * fitScale) / 2;
+    panY.current = (h - activeImage.height * fitScale) / 2;
+    setZoomDisplay(Math.round(fitScale * 100));
   };
 
-  // Render Loop
-  useEffect(() => {
+  // EFFECT 2: Redraw canvas when image is ready OR when zoom/pan/detections change
+  const redrawCanvas = useCallback(() => {
     const canvas = canvasRef.current;
-    if (!canvas || !image) return;
+    if (!canvas || !imageRef.current) return;
 
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
+
+    const image = imageRef.current;
 
     // Clear background
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     ctx.save();
     // Apply zoom and pan transformations
-    ctx.translate(offset.x, offset.y);
-    ctx.scale(scale, scale);
+    ctx.translate(panX.current, panY.current);
+    ctx.scale(zoom.current, zoom.current);
 
     // 1. Draw PDF page document
     ctx.drawImage(image, 0, 0);
@@ -129,7 +127,7 @@ export const AnnotationCanvas: React.FC<AnnotationCanvasProps> = ({ detections, 
 
       if (w > 30 || isHovered) {
         ctx.fillStyle = color;
-        const fontHeight = Math.max(10, Math.floor(11 / scale));
+        const fontHeight = Math.max(10, Math.floor(11 / zoom.current));
         ctx.font = `bold ${fontHeight}px JetBrains Mono, monospace`;
         const textStr = `${CLASS_LABELS[det.type] || det.type.toUpperCase()} [${idx}]`;
         const textWidth = ctx.measureText(textStr).width;
@@ -157,7 +155,7 @@ export const AnnotationCanvas: React.FC<AnnotationCanvasProps> = ({ detections, 
 
       // floating cursor tooltip values
       ctx.fillStyle = drawColor;
-      const drawFontHeight = Math.max(10, Math.floor(11 / scale));
+      const drawFontHeight = Math.max(10, Math.floor(11 / zoom.current));
       ctx.font = `bold ${drawFontHeight}px JetBrains Mono, monospace`;
       const sizeTag = `${CLASS_LABELS[selectedDrawClass].toUpperCase()} (${Math.round(x1 - x0)}x${Math.round(y1 - y0)})`;
       const sizeTagWidth = ctx.measureText(sizeTag).width;
@@ -167,7 +165,12 @@ export const AnnotationCanvas: React.FC<AnnotationCanvasProps> = ({ detections, 
     }
 
     ctx.restore();
-  }, [image, detections, scale, offset, hoveredDetectionIndex, resizedDimensions, drawingBbox, selectedDrawClass]);
+  }, [detections, hoveredDetectionIndex, selectedDrawClass, drawingBbox]);
+
+  useEffect(() => {
+    if (!imgReady || !imageRef.current) return;
+    redrawCanvas();
+  }, [imgReady, redrawCanvas]);
 
   const hexToRgba = (hex: string, alpha: number) => {
     const r = parseInt(hex.slice(1, 3), 16);
@@ -176,25 +179,38 @@ export const AnnotationCanvas: React.FC<AnnotationCanvasProps> = ({ detections, 
     return `rgba(${r}, ${g}, ${b}, ${alpha})`;
   };
 
-  const getCanvasCoords = (e: React.MouseEvent<HTMLCanvasElement>) => {
-    if (!canvasRef.current || !image) return null;
+  const getCanvasCoords = (e: React.MouseEvent<HTMLCanvasElement> | WheelEvent) => {
+    if (!canvasRef.current || !imageRef.current) return null;
     const rect = canvasRef.current.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
+    
+    let clientX: number, clientY: number;
+    if (e instanceof WheelEvent) {
+      clientX = e.clientX;
+      clientY = e.clientY;
+    } else {
+      clientX = e.clientX;
+      clientY = e.clientY;
+    }
 
-    const imgX = (x - offset.x) / scale;
-    const imgY = (y - offset.y) / scale;
+    const x = clientX - rect.left;
+    const y = clientY - rect.top;
+
+    const imgX = (x - panX.current) / zoom.current;
+    const imgY = (y - panY.current) / zoom.current;
 
     return { x: imgX, y: imgY };
   };
 
   const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
     if (canvasMode === 'pan') {
-      if (isPanning) {
-        const dx = e.clientX - panStart.x;
-        const dy = e.clientY - panStart.y;
-        setOffset({ x: offset.x + dx, y: offset.y + dy });
-        setPanStart({ x: e.clientX, y: e.clientY });
+      if (isDragging.current) {
+        const dx = e.clientX - (e.currentTarget as any).__lastX;
+        const dy = e.clientY - (e.currentTarget as any).__lastY;
+        panX.current += dx;
+        panY.current += dy;
+        (e.currentTarget as any).__lastX = e.clientX;
+        (e.currentTarget as any).__lastY = e.clientY;
+        redrawCanvas();
         return;
       }
 
@@ -231,8 +247,9 @@ export const AnnotationCanvas: React.FC<AnnotationCanvasProps> = ({ detections, 
   const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
     if (canvasMode === 'pan') {
       if (e.button === 0 && hoveredDetectionIndex === null) {
-        setIsPanning(true);
-        setPanStart({ x: e.clientX, y: e.clientY });
+        isDragging.current = true;
+        (e.currentTarget as any).__lastX = e.clientX;
+        (e.currentTarget as any).__lastY = e.clientY;
       }
     } else if (canvasMode === 'draw') {
       if (activeModelTab !== 'GT') {
@@ -252,7 +269,7 @@ export const AnnotationCanvas: React.FC<AnnotationCanvasProps> = ({ detections, 
 
   const handleMouseUp = (e: React.MouseEvent<HTMLCanvasElement>) => {
     if (canvasMode === 'pan') {
-      setIsPanning(false);
+      isDragging.current = false;
     } else if (canvasMode === 'draw') {
       if (isDrawing && drawingBbox) {
         const [x0, y0, x1, y1] = drawingBbox;
@@ -271,65 +288,100 @@ export const AnnotationCanvas: React.FC<AnnotationCanvasProps> = ({ detections, 
   };
 
   const handleMouseLeave = () => {
-    setIsPanning(false);
+    isDragging.current = false;
     setIsDrawing(false);
     setDrawStart(null);
     setDrawingBbox(null);
     setHoveredDetectionIndex(null);
   };
 
-  const handleWheel = (e: React.WheelEvent<HTMLCanvasElement>) => {
+  // TASK 2: Fixed scroll zoom with normalization and throttling
+  const ZOOM_STEP = 0.12;
+  const ZOOM_MIN = 0.15;
+  const ZOOM_MAX = 6.0;
+
+  const handleWheel = useCallback((e: WheelEvent) => {
     e.preventDefault();
-    const zoomIntensity = 0.08;
-    const rect = canvasRef.current!.getBoundingClientRect();
-    const mouseX = e.clientX - rect.left;
-    const mouseY = e.clientY - rect.top;
+    
+    // Throttle: max ~30 zoom steps/sec
+    const now = performance.now();
+    if (now - lastWheel.current < 32) return;
+    lastWheel.current = now;
 
-    const imgX = (mouseX - offset.x) / scale;
-    const imgY = (mouseY - offset.y) / scale;
+    // Normalize: use ONLY the direction sign, ignore magnitude
+    const dir = Math.sign(e.deltaY);  // -1 = zoom in, +1 = zoom out
 
-    const zoomFactor = e.deltaY < 0 ? (1 + zoomIntensity) : (1 - zoomIntensity);
-    const nextScale = Math.max(0.12, Math.min(6, scale * zoomFactor));
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const rect = canvas.getBoundingClientRect();
 
-    setOffset({
-      x: mouseX - imgX * nextScale,
-      y: mouseY - imgY * nextScale
-    });
-    setScale(nextScale);
+    // Cursor position relative to canvas element
+    const cursorX = e.clientX - rect.left;
+    const cursorY = e.clientY - rect.top;
+
+    const prevZoom = zoom.current;
+    const newZoom = Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, prevZoom * (1 - dir * ZOOM_STEP)));
+
+    // Zoom toward cursor: adjust pan so point under cursor stays fixed
+    const ratio = newZoom / prevZoom;
+    panX.current = cursorX - ratio * (cursorX - panX.current);
+    panY.current = cursorY - ratio * (cursorY - panY.current);
+    zoom.current = newZoom;
+
+    setZoomDisplay(Math.round(newZoom * 100));
+    redrawCanvas();
+  }, [redrawCanvas]);
+
+  // Attach wheel listener with cleanup
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    
+    canvas.addEventListener('wheel', handleWheel, { passive: false });
+    return () => {
+      canvas.removeEventListener('wheel', handleWheel);
+    };
+  }, [handleWheel]);
+
+  // TASK 3: Zoom button handlers
+  const applyZoom = useCallback((newZoom: number) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const clamped = Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, newZoom));
+    // Zoom toward canvas center when using buttons
+    const cx = canvas.width / 2;
+    const cy = canvas.height / 2;
+    const ratio = clamped / zoom.current;
+    panX.current = cx - ratio * (cx - panX.current);
+    panY.current = cy - ratio * (cy - panY.current);
+    zoom.current = clamped;
+    setZoomDisplay(Math.round(clamped * 100));
+    redrawCanvas();
+  }, [redrawCanvas]);
+
+  const handleZoomIn = () => applyZoom(zoom.current + ZOOM_STEP);
+  const handleZoomOut = () => applyZoom(zoom.current - ZOOM_STEP);
+  const handleZoomReset = () => {
+    panX.current = 0;
+    panY.current = 0;
+    zoom.current = 1.0;
+    setZoomDisplay(100);
+    redrawCanvas();
   };
 
-  const zoomIn = () => {
-    setScale(prev => {
-      const nextScale = Math.min(6, prev + 0.15);
-      if (containerRef.current) {
-        const w = containerRef.current.clientWidth / 2;
-        const h = containerRef.current.clientHeight / 2;
-        const imgX = (w - offset.x) / prev;
-        const imgY = (h - offset.y) / prev;
-        setOffset({
-          x: w - imgX * nextScale,
-          y: h - imgY * nextScale
-        });
-      }
-      return nextScale;
-    });
-  };
-
-  const zoomOut = () => {
-    setScale(prev => {
-      const nextScale = Math.max(0.12, prev - 0.15);
-      if (containerRef.current) {
-        const w = containerRef.current.clientWidth / 2;
-        const h = containerRef.current.clientHeight / 2;
-        const imgX = (w - offset.x) / prev;
-        const imgY = (h - offset.y) / prev;
-        setOffset({
-          x: w - imgX * nextScale,
-          y: h - imgY * nextScale
-        });
-      }
-      return nextScale;
-    });
+  // Zoom button style constant
+  const zoomBtnStyle: React.CSSProperties = {
+    background: 'transparent',
+    border: 'none',
+    color: '#aaaaaa',
+    cursor: 'pointer',
+    padding: '4px',
+    borderRadius: '5px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    transition: 'color 0.12s ease',
+    outline: 'none',
   };
 
   return (
@@ -337,6 +389,7 @@ export const AnnotationCanvas: React.FC<AnnotationCanvasProps> = ({ detections, 
       id="canvas_container_panel"
       ref={containerRef} 
       className="flex-1 w-full bg-surface-dim border border-border relative overflow-hidden flex items-center justify-center bg-grid-subtle transition-all h-[650px]"
+      style={{ position: 'relative', width: '100%', height: '100%', overflow: 'hidden', background: '#111' }}
     >
       {loading ? (
         <div className="flex flex-col items-center gap-3">
@@ -344,22 +397,94 @@ export const AnnotationCanvas: React.FC<AnnotationCanvasProps> = ({ detections, 
           <p className="font-mono text-xs text-text-muted">LOADING SOURCE DOCUMENT IMAGES...</p>
         </div>
       ) : (
-        <canvas
-          id="clinical_annotation_canvas"
-          ref={canvasRef}
-          width={resizedDimensions.width}
-          height={resizedDimensions.height}
-          onMouseMove={handleMouseMove}
-          onMouseDown={handleMouseDown}
-          onMouseUp={handleMouseUp}
-          onMouseLeave={handleMouseLeave}
-          onWheel={handleWheel}
-          style={{ 
-            cursor: canvasMode === 'draw' ? 'crosshair' : isPanning ? 'grabbing' : hoveredDetectionIndex !== null ? 'pointer' : 'grab', 
-            display: 'block' 
-          }}
-          className="w-full h-full"
-        />
+        <>
+          <canvas
+            id="clinical_annotation_canvas"
+            ref={canvasRef}
+            width={resizedDimensions.width}
+            height={resizedDimensions.height}
+            onMouseMove={handleMouseMove}
+            onMouseDown={handleMouseDown}
+            onMouseUp={handleMouseUp}
+            onMouseLeave={handleMouseLeave}
+            style={{ 
+              cursor: canvasMode === 'draw' ? 'crosshair' : isDragging.current ? 'grabbing' : hoveredDetectionIndex !== null ? 'pointer' : 'grab', 
+              display: 'block' 
+            }}
+            className="w-full h-full"
+          />
+
+          {/* ── Zoom Controls ─────────────────────────────── */}
+          <div style={{
+            position: 'absolute',
+            bottom: '14px',
+            right: '14px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '2px',
+            background: 'rgba(14, 14, 14, 0.88)',
+            border: '1px solid #222',
+            borderRadius: '8px',
+            padding: '5px 8px',
+            zIndex: 20,
+            backdropFilter: 'blur(6px)',
+            boxShadow: '0 2px 12px rgba(0,0,0,0.5)',
+          }}>
+
+            {/* Zoom Out button */}
+            <button onClick={handleZoomOut} title="Zoom Out (−)"
+              style={zoomBtnStyle} onMouseEnter={e => (e.currentTarget.style.color='#00ffcc')}
+              onMouseLeave={e => (e.currentTarget.style.color='#aaa')}>
+              <svg width="17" height="17" viewBox="0 0 24 24"
+                   fill="none" stroke="currentColor" strokeWidth="2.2"
+                   strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="11" cy="11" r="7.5"/>
+                <line x1="21" y1="21" x2="16.2" y2="16.2"/>
+                <line x1="7.5" y1="11" x2="14.5" y2="11"/>
+              </svg>
+            </button>
+
+            {/* Zoom percentage display */}
+            <span style={{
+              color: '#00ffcc',
+              fontSize: '11px',
+              fontFamily: '"JetBrains Mono", "Fira Code", monospace',
+              fontWeight: 600,
+              minWidth: '44px',
+              textAlign: 'center',
+              userSelect: 'none',
+              letterSpacing: '0.03em',
+            }}>
+              {zoomDisplay}%
+            </span>
+
+            {/* Zoom In button */}
+            <button onClick={handleZoomIn} title="Zoom In (+)"
+              style={zoomBtnStyle} onMouseEnter={e => (e.currentTarget.style.color='#00ffcc')}
+              onMouseLeave={e => (e.currentTarget.style.color='#aaa')}>
+              <svg width="17" height="17" viewBox="0 0 24 24"
+                   fill="none" stroke="currentColor" strokeWidth="2.2"
+                   strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="11" cy="11" r="7.5"/>
+                <line x1="21" y1="21" x2="16.2" y2="16.2"/>
+                <line x1="11" y1="7.5" x2="11" y2="14.5"/>
+                <line x1="7.5" y1="11" x2="14.5" y2="11"/>
+              </svg>
+            </button>
+
+            {/* Divider */}
+            <div style={{ width:'1px', height:'16px', background:'#2a2a2a', margin:'0 3px' }}/>
+
+            {/* Reset 1:1 button */}
+            <button onClick={handleZoomReset} title="Reset Zoom (1:1)"
+              style={{ ...zoomBtnStyle, fontSize:'10px', fontFamily:'monospace',
+                       padding:'3px 7px', letterSpacing:'0.05em' }}
+              onMouseEnter={e => (e.currentTarget.style.color='#00ffcc')}
+              onMouseLeave={e => (e.currentTarget.style.color='#888')}>
+              1:1
+            </button>
+          </div>
+        </>
       )}
 
       {/* Modern Canvas Interaction Modes Floating Menu */}
@@ -407,45 +532,11 @@ export const AnnotationCanvas: React.FC<AnnotationCanvasProps> = ({ detections, 
                     : 'border-border/60 hover:border-primary text-on-surface'
                 }`}
               >
-                <span className="w-1.5 h-1.5 rounded-sm shrink-0" style={{ backgroundColor: CLASS_COLORS[cls] }} />
-                <span className="truncate">{CLASS_LABELS[cls]}</span>
+                <div className="w-2 h-2 rounded-xs" style={{ backgroundColor: CLASS_COLORS[cls] }} />
+                {CLASS_LABELS[cls]}
               </button>
             ))}
           </div>
-        </div>
-      )}
-
-      {/* Floating Zoom & Frame Reset Utilities Overlay */}
-      <div className="absolute bottom-4 right-4 flex flex-col gap-2 z-20">
-        <button 
-          id="zoom_in_btn"
-          onClick={zoomIn}
-          title="Zoom In"
-          className="w-10 h-10 bg-surface-container-high hover:bg-surface-bright text-on-surface border border-border rounded flex items-center justify-center transition-colors shadow-lg cursor-pointer"
-        >
-          <Maximize className="w-4 h-4 text-primary" />
-        </button>
-        <button 
-          id="zoom_out_btn"
-          onClick={zoomOut}
-          title="Zoom Out"
-          className="w-10 h-10 bg-surface-container-high hover:bg-surface-bright text-on-surface border border-border rounded flex items-center justify-center transition-colors shadow-lg cursor-pointer"
-        >
-          <Minimize className="w-4 h-4 text-primary" />
-        </button>
-        <button 
-          id="zoom_reset_btn"
-          onClick={() => resetZoom()}
-          title="Reset Frame Fit"
-          className="w-10 h-10 bg-surface-container-high hover:bg-surface-bright text-on-surface border border-border rounded flex items-center justify-center transition-colors shadow-lg cursor-pointer"
-        >
-          <RotateCcw className="w-4 h-4 text-primary" />
-        </button>
-      </div>
-
-      {loading ? null : (
-        <div className="absolute top-4 right-4 bg-surface-container-high/90 backdrop-blur border border-border py-1 px-3 text-[10px] font-mono text-text-muted rounded shadow-md pointer-events-none hidden md:block">
-          {canvasMode === 'pan' ? 'PAN: DRAG BACKGROUND | ZOOM: SCROLL' : 'DRAW: DRAG TO DEFINE COMPONENT BOUNDS'}
         </div>
       )}
     </div>

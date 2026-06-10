@@ -1,0 +1,3 @@
+## 2026-06-10T07:59:30Z
+
+Investigate the React annotation canvas in the workspace directory c:\Users\user\Downloads\medical-document-layout-annotator. Find the React components, state management, canvas drawing code, event handlers, and how images and annotations are rendered on the canvas. Document the exact file paths and line numbers. Analyze how the current implementation causes flickering/vibration, how hypersensitive scroll-wheel zoom is implemented, and the general project setup (packages, bundler, testing framework, etc.). Recommend a refactoring strategy without writing code. Write your analysis and handoff report in c:\Users\user\Downloads\medical-document-layout-annotator\.agents\explorer_1\analysis.md and handoff.md.
