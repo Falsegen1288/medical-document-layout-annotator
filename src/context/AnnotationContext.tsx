@@ -5,7 +5,7 @@ import { PageData, Detection } from '../types';
 interface AnnotationContextType {
   pages: PageData[];
   currentPageIndex: number;
-  activeModelTab: 'ADE' | 'DL' | 'NM' | 'GT';
+  activeModelTab: 'DL' | 'NM' | 'GT';
   workingDetections: Detection[];
   hoveredDetectionIndex: number | null;
   undoStack: { detection: Detection; index: number }[];
@@ -14,9 +14,9 @@ interface AnnotationContextType {
 
   // Actions
   changePage: (pageIndex: number) => void;
-  setActiveModelTab: (tab: 'ADE' | 'DL' | 'NM' | 'GT') => void;
+  setActiveModelTab: (tab: 'DL' | 'NM' | 'GT') => void;
   setHoveredDetectionIndex: (idx: number | null) => void;
-  initWorkingDetections: (base: 'ADE' | 'DL' | 'NM' | 'blank') => void;
+  initWorkingDetections: (base: 'DL' | 'NM' | 'blank') => void;
   updateDetection: (idx: number, patch: Partial<Detection>) => void;
   deleteDetection: (idx: number) => void;
   addDetection: (type: Detection['type'], bbox: Detection['bbox']) => void;

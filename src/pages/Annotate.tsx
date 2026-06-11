@@ -14,7 +14,9 @@ import {
   Check, 
   ChevronLeft,
   ChevronRight,
-  Activity
+  Activity,
+  Save,
+  XCircle
 } from 'lucide-react';
 
 interface AnnotateProps {
@@ -32,14 +34,19 @@ export const Annotate: React.FC<AnnotateProps> = ({ onNavigateToTab }) => {
   
   // Evaluation Modal visibility
   const [isEvalOpen, setIsEvalOpen] = useState(false);
-  const [evalTargetModel, setEvalTargetModel] = useState<'DL' | 'NM' | 'ADE'>('DL');
+  const [evalTargetModel, setEvalTargetModel] = useState<'DL' | 'NM'>('DL');
 
   // Base model swapper guard modal local visibility
   const [showResetConfirm, setShowResetConfirm] = useState<boolean>(false);
-  const [selectedBaseModel, setSelectedBaseModel] = useState<'ADE' | 'DL' | 'NM' | 'blank' | null>(null);
+  const [selectedBaseModel, setSelectedBaseModel] = useState<'DL' | 'NM' | 'blank' | null>(null);
 
   // Local visibility states of individual detections (by index)
   const [hiddenDetections, setHiddenDetections] = useState<Record<number, boolean>>({});
+
+  // Issue 4: Unsaved changes modal
+  const [showUnsavedModal, setShowUnsavedModal] = useState<boolean>(false);
+  const [pendingPageIndex, setPendingPageIndex] = useState<number | null>(null);
+  const [isSaving, setIsSaving] = useState<boolean>(false);
 
   // Reset hidden state on page change
   useEffect(() => {
@@ -72,7 +79,6 @@ export const Annotate: React.FC<AnnotateProps> = ({ onNavigateToTab }) => {
 
   // Determine detections current context for canvas drawing
   const getRenderDetections = () => {
-    if (store.activeModelTab === 'ADE') return currentPage.model_c.detections;
     if (store.activeModelTab === 'DL') return currentPage.model_a.detections;
     if (store.activeModelTab === 'NM') return currentPage.model_b.detections;
     return store.workingDetections.filter((_, idx) => !hiddenDetections[idx]);
@@ -102,7 +108,7 @@ export const Annotate: React.FC<AnnotateProps> = ({ onNavigateToTab }) => {
   const overlaps = computeOverlaps();
 
   // Base model swapper guard
-  const handleBaseModelClick = (base: 'ADE' | 'DL' | 'NM' | 'blank') => {
+  const handleBaseModelClick = (base: 'DL' | 'NM' | 'blank') => {
     setSelectedBaseModel(base);
     // If working detections have changes or edits, show confirm dialog
     setShowResetConfirm(true);
@@ -116,23 +122,69 @@ export const Annotate: React.FC<AnnotateProps> = ({ onNavigateToTab }) => {
     setSelectedBaseModel(null);
   };
 
-  // Page index navigators
+  // Issue 4: Navigation guard — intercept all page changes
+  const requestPageChange = (newIndex: number) => {
+    if (newIndex === store.currentPageIndex) return;
+    
+    if (store.isPageDirty(store.currentPageIndex)) {
+      setPendingPageIndex(newIndex);
+      setShowUnsavedModal(true);
+    } else {
+      store.forceChangePage(newIndex);
+    }
+  };
+
+  // Issue 4: Modal actions
+  const handleSaveAndContinue = async () => {
+    if (pendingPageIndex === null) return;
+    setIsSaving(true);
+    await store.savePageEdits(store.currentPageIndex);
+    setIsSaving(false);
+    setShowUnsavedModal(false);
+    store.forceChangePage(pendingPageIndex);
+    setPendingPageIndex(null);
+  };
+
+  const handleDiscardAndContinue = () => {
+    if (pendingPageIndex === null) return;
+    store.discardPageEdits(store.currentPageIndex);
+    setShowUnsavedModal(false);
+    store.forceChangePage(pendingPageIndex);
+    setPendingPageIndex(null);
+  };
+
+  const handleCancelNavigation = () => {
+    setShowUnsavedModal(false);
+    setPendingPageIndex(null);
+  };
+
+  // Page index navigators using guard
   const handlePrevPage = () => {
     if (store.currentPageIndex > 0) {
-      store.changePage(store.currentPageIndex - 1);
+      requestPageChange(store.currentPageIndex - 1);
     }
   };
 
   const handleNextPage = () => {
     if (store.currentPageIndex < store.pages.length - 1) {
-      store.changePage(store.currentPageIndex + 1);
+      requestPageChange(store.currentPageIndex + 1);
     }
   };
 
   const getPredictedDetsForEval = () => {
     if (evalTargetModel === 'DL') return currentPage.model_a.detections;
-    if (evalTargetModel === 'NM') return currentPage.model_b.detections;
-    return currentPage.model_c.detections;
+    return currentPage.model_b.detections;
+  };
+
+  // Issue 3: Get current page's base model selection
+  const currentBaseModel = store.baseModelPerPage[store.currentPageIndex] || null;
+
+  // Helper for base model button styling
+  const baseModelBtnClass = (model: 'DL' | 'NM' | 'blank') => {
+    const isActive = currentBaseModel === model;
+    return isActive
+      ? "bg-primary/15 hover:bg-primary/25 border-2 border-primary text-primary text-[10px] font-mono px-2 py-1 rounded transition-colors cursor-pointer font-bold shadow-sm"
+      : "bg-surface-container-high hover:bg-surface-bright border border-border text-on-surface text-[10px] font-mono px-2 py-1 rounded transition-colors cursor-pointer";
   };
 
   return (
@@ -148,7 +200,7 @@ export const Annotate: React.FC<AnnotateProps> = ({ onNavigateToTab }) => {
             <select 
               id="active_document_navigator"
               value={store.currentPageIndex} 
-              onChange={(e) => store.changePage(Number(e.target.value))}
+              onChange={(e) => requestPageChange(Number(e.target.value))}
               className="w-full bg-surface-container-high border border-border text-on-surface text-xs font-mono p-2 rounded focus:outline-none focus:ring-1 focus:ring-primary cursor-pointer appearance-none"
             >
               {store.pages.map((p, idx) => (
@@ -228,7 +280,6 @@ export const Annotate: React.FC<AnnotateProps> = ({ onNavigateToTab }) => {
 
           <div className="flex gap-1.5">
             {[
-              { id: 'ADE', label: 'ADE GT' },
               { id: 'DL', label: 'DocLayoutYOLO' },
               { id: 'NM', label: 'Nemotron' },
               { id: 'GT', label: 'Current GT (Working)' }
@@ -256,26 +307,20 @@ export const Annotate: React.FC<AnnotateProps> = ({ onNavigateToTab }) => {
           </span>
           <div className="flex gap-2">
             <button 
-              onClick={() => handleBaseModelClick('ADE')}
-              className="bg-surface-container-high hover:bg-surface-bright border border-border text-on-surface text-[10px] font-mono px-2 py-1 rounded transition-colors cursor-pointer"
-            >
-              ADE DPT-2
-            </button>
-            <button 
               onClick={() => handleBaseModelClick('DL')}
-              className="bg-surface-container-high hover:bg-surface-bright border border-border text-on-surface text-[10px] font-mono px-2 py-1 rounded transition-colors cursor-pointer"
+              className={baseModelBtnClass('DL')}
             >
               YOLO
             </button>
             <button 
               onClick={() => handleBaseModelClick('NM')}
-              className="bg-surface-container-high hover:bg-surface-bright border border-border text-on-surface text-[10px] font-mono px-2 py-1 rounded transition-colors cursor-pointer"
+              className={baseModelBtnClass('NM')}
             >
               Nemotron
             </button>
             <button 
               onClick={() => handleBaseModelClick('blank')}
-              className="bg-surface-container-high hover:bg-surface-bright border border-border text-on-surface text-[10px] font-mono px-2 py-1 rounded transition-colors cursor-pointer"
+              className={baseModelBtnClass('blank')}
             >
               Blank Slate
             </button>
@@ -298,6 +343,9 @@ export const Annotate: React.FC<AnnotateProps> = ({ onNavigateToTab }) => {
             <h2 className="font-mono text-xs font-bold text-primary uppercase tracking-wider">Detections Editor</h2>
             <p className="font-mono text-[9px] text-text-muted uppercase tracking-widest mt-1">
               Page {currentPage.page} ({store.workingDetections.length} elements)
+              {store.isPageDirty(store.currentPageIndex) && (
+                <span className="ml-2 text-warning font-bold">● UNSAVED</span>
+              )}
             </p>
           </div>
           
@@ -318,7 +366,6 @@ export const Annotate: React.FC<AnnotateProps> = ({ onNavigateToTab }) => {
               >
                 <option value="DL" className="bg-surface">vs YOLO</option>
                 <option value="NM" className="bg-surface">vs Nemotron</option>
-                <option value="ADE" className="bg-surface">vs ADE</option>
               </select>
               <button 
                 onClick={() => setIsEvalOpen(true)}
@@ -495,7 +542,7 @@ export const Annotate: React.FC<AnnotateProps> = ({ onNavigateToTab }) => {
               <AlertTriangle className="w-5 h-5 text-warning" /> Destructive Operation Guard
             </h3>
             <p className="text-sm text-text-muted mt-3 leading-relaxed">
-              This will overwrite all active adjustments and restore the page's workspace to the model outputs of {selectedBaseModel === 'blank' ? 'a blank slate' : selectedBaseModel}.
+              This will overwrite all active adjustments and restore the page's workspace to the model outputs of {selectedBaseModel === 'blank' ? 'a blank slate' : selectedBaseModel === 'DL' ? 'DocLayoutYOLO' : 'Nemotron'}.
             </p>
             <div className="flex gap-3 mt-6">
               <button 
@@ -544,10 +591,51 @@ export const Annotate: React.FC<AnnotateProps> = ({ onNavigateToTab }) => {
         onClose={() => setIsEvalOpen(false)}
         referenceDetections={store.workingDetections}
         predictedDetections={getPredictedDetsForEval()}
-        modelName={evalTargetModel === 'DL' ? 'DocLayoutYOLO' : evalTargetModel === 'NM' ? 'Nemotron-Parse' : 'ADE-DPT2'}
+        modelName={evalTargetModel === 'DL' ? 'DocLayoutYOLO' : 'Nemotron-Parse'}
         pageWidth={currentPage.image_size[0]}
         pageHeight={currentPage.image_size[1]}
       />
+
+      {/* 7. ISSUE 4: UNSAVED CHANGES NAVIGATION GUARD MODAL */}
+      {showUnsavedModal && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+          <div className="bg-surface border border-border p-6 rounded-lg shadow-2xl max-w-md w-full font-sans">
+            <h3 className="font-mono text-sm font-semibold text-warning flex items-center gap-2 uppercase tracking-wide">
+              <AlertTriangle className="w-5 h-5 text-warning" />
+              Unsaved Changes on Page {currentPage.page}
+            </h3>
+            <p className="text-sm text-text-muted mt-3 leading-relaxed">
+              You have unsaved edits on the current page. What would you like to do before navigating away?
+            </p>
+            <div className="flex flex-col gap-2 mt-6">
+              <button 
+                onClick={handleSaveAndContinue}
+                disabled={isSaving}
+                className="w-full bg-primary text-on-primary py-2.5 text-xs font-mono font-bold uppercase tracking-wider rounded hover:brightness-110 transition-all cursor-pointer flex items-center justify-center gap-2 disabled:opacity-60"
+              >
+                <Save className="w-4 h-4" />
+                {isSaving ? 'Saving...' : 'Save & Continue'}
+              </button>
+              <button 
+                onClick={handleDiscardAndContinue}
+                disabled={isSaving}
+                className="w-full bg-error/80 text-on-primary py-2.5 text-xs font-mono font-bold uppercase tracking-wider rounded hover:brightness-110 transition-all cursor-pointer flex items-center justify-center gap-2 disabled:opacity-60"
+              >
+                <Trash2 className="w-4 h-4" />
+                Discard & Continue
+              </button>
+              <button 
+                onClick={handleCancelNavigation}
+                disabled={isSaving}
+                className="w-full bg-surface-container-high hover:bg-surface-bright border border-border text-on-surface py-2.5 text-xs font-mono font-semibold uppercase tracking-wider rounded transition-colors cursor-pointer flex items-center justify-center gap-2 disabled:opacity-60"
+              >
+                <XCircle className="w-4 h-4" />
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   );

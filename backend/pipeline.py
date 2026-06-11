@@ -10,7 +10,7 @@ import fitz # PyMuPDF (no poppler required!)
 # Import our models
 from backend.models.run_doclay import run_doclayoutyolo
 from backend.models.run_nemotron import run_nemotron
-from backend.models.run_ade import run_ade_dpt2
+# ADE-DPT2 removed — no longer called in pipeline
 from backend.evaluation import generate_side_by_side_visualizations, generate_comparison_chart, generate_pycote_report
 
 # Global progress store: session_id -> list/queue of progress messages
@@ -116,14 +116,14 @@ def run_pipeline(session_id: str, pdf_path: str, pages: list, output_dir: str):
                 "page": pg,
                 "model": "DocLayoutYOLO",
                 "message": f"Processed Page {pg} with DocLayoutYOLO.",
-                "percent": int(30 + ((idx + 1) / len(pages)) * 20)
+                "percent": int(30 + ((idx + 1) / len(pages)) * 25)
             })
             time.sleep(0.02)
             
-        log_progress({"step": "model_a_complete", "message": "DocLayoutYOLO processing complete.", "percent": 50})
+        log_progress({"step": "model_a_complete", "message": "DocLayoutYOLO processing complete.", "percent": 55})
         
         # 3. Run Nemotron (Model B) sequentially
-        log_progress({"step": "model_b_start", "message": "Running Model B (Nemotron-Parse)...", "percent": 55})
+        log_progress({"step": "model_b_start", "message": "Running Model B (Nemotron-Parse)...", "percent": 60})
         time.sleep(0.1)
         
         # Run Nemotron once for all pages
@@ -149,7 +149,7 @@ def run_pipeline(session_id: str, pdf_path: str, pages: list, output_dir: str):
                     "page": pg,
                     "model": "Nemotron-Parse-v1.1",
                     "message": f"Processed Page {pg} with Nemotron-Parse.",
-                    "percent": int(55 + ((idx + 1) / len(pages)) * 20)
+                    "percent": int(60 + ((idx + 1) / len(pages)) * 25)
                 })
             else:
                 log_progress({
@@ -157,45 +157,18 @@ def run_pipeline(session_id: str, pdf_path: str, pages: list, output_dir: str):
                     "page": pg,
                     "model": "Nemotron-Parse-v1.1",
                     "message": f"Skipped Nemotron-Parse on Page {pg} (VRAM constraint).",
-                    "percent": int(55 + ((idx + 1) / len(pages)) * 20)
+                    "percent": int(60 + ((idx + 1) / len(pages)) * 25)
                 })
             time.sleep(0.02)
             
-        log_progress({"step": "model_b_complete", "message": "Nemotron-Parse processing complete.", "percent": 75})
+        log_progress({"step": "model_b_complete", "message": "Nemotron-Parse processing complete.", "percent": 85})
         
-        # 4. Run ADE-DPT2 (Model C)
-        log_progress({"step": "model_c_start", "message": "Running Model C (ADE-DPT2) via LandingAI API...", "percent": 80})
-        time.sleep(0.1)
-        
-        # Run ADE-DPT2 once for all pages
-        try:
-            ade_results = run_ade_dpt2(page_paths, os.environ.get("LANDING_AI_API_KEY"), {"config": {"min_bbox_area": 100}})
-            if ade_results is None:
-                raise ValueError("ADE-DPT2 processing failed.")
-        except Exception as e:
-            import traceback
-            log_progress({
-                "step": "error",
-                "message": f"ADE-DPT2 failed: {str(e)}",
-                "traceback": traceback.format_exc(),
-                "percent": -1
-            })
-            return
-        
-        for idx, pg in enumerate(pages):
-            log_progress({
-                "step": "model_c_running",
-                "page": pg,
-                "model": "ADE-DPT2",
-                "message": f"Processed Page {pg} with ADE-DPT2.",
-                "percent": int(80 + ((idx + 1) / len(pages)) * 15)
-            })
-            time.sleep(0.02)
-            
-        log_progress({"step": "model_c_complete", "message": "ADE-DPT2 processing complete.", "percent": 95})
+        # 4. ADE-DPT2 (Model C) — REMOVED, no longer executed
+        # run_ade.py is kept on disk but not invoked
+        ade_results = {pg: [] for pg in pages}  # empty detections placeholder
         
         # 5. Generate Evaluation Artifacts
-        log_progress({"step": "evaluation", "message": "Generating visualizations, charts, and pyCOTe reports...", "percent": 96})
+        log_progress({"step": "evaluation", "message": "Generating visualizations, charts, and pyCOTe reports...", "percent": 88})
         
         try:
             generate_side_by_side_visualizations(page_images, dl_results, nm_results, nemotron_pages, output_dir)
@@ -206,7 +179,7 @@ def run_pipeline(session_id: str, pdf_path: str, pages: list, output_dir: str):
             print(f"Evaluation error: {eval_err}")
             
         # 6. Build annotation_input.json structure
-        log_progress({"step": "saving", "message": "Saving annotation session to workspace cache...", "percent": 98})
+        log_progress({"step": "saving", "message": "Saving annotation session to workspace cache...", "percent": 95})
         
         annotation_input = {}
         for pg in pages:

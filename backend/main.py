@@ -5,6 +5,7 @@ load_dotenv()
 import json
 import uuid
 import asyncio
+import io
 from fastapi import FastAPI, UploadFile, File, Form, BackgroundTasks, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse, FileResponse
@@ -30,6 +31,10 @@ os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 class SaveRequest(BaseModel):
     pages_data: dict # Maps string page numbers to PageData models
+
+class SavePageRequest(BaseModel):
+    page: int
+    detections: list
 
 @app.post("/api/session/start")
 async def start_session(
@@ -64,7 +69,7 @@ async def start_session(
     
     return {
         "session_id": session_id,
-        "models_found": ["DocLayoutYOLO", "Nemotron-Parse-v1.1", "ADE-DPT2"],
+        "models_found": ["DocLayoutYOLO", "Nemotron-Parse-v1.1"],
         "pages": parsed_pages,
         "landing_ai_key_detected": os.environ.get("LANDING_AI_API_KEY") is not None
     }
@@ -139,6 +144,181 @@ async def save_session_data(session_id: str, request: SaveRequest):
         return {"status": "success", "message": "Ground truth saved successfully."}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to save ground truth: {e}")
+
+
+# ─── Issue 4: Save single page endpoint ───────────────────────
+@app.post("/api/session/{session_id}/save-page")
+async def save_page(session_id: str, request: SavePageRequest):
+    session_file = os.path.join(UPLOAD_DIR, session_id, "annotation_input.json")
+    if not os.path.exists(session_file):
+        raise HTTPException(status_code=404, detail="Session does not exist.")
+    
+    try:
+        with open(session_file, "r", encoding="utf-8") as f:
+            stored_data = json.load(f)
+        
+        page_str = str(request.page)
+        if page_str not in stored_data:
+            raise HTTPException(status_code=404, detail=f"Page {request.page} not found in session.")
+        
+        stored_data[page_str]["ground_truth"] = request.detections
+        
+        with open(session_file, "w", encoding="utf-8") as f:
+            json.dump(stored_data, f, indent=2)
+        
+        return {"status": "saved", "page": request.page}
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to save page: {e}")
+
+
+# ─── Issue 5: Commit session → annotated PDF download ─────────
+@app.post("/api/session/{session_id}/commit")
+async def commit_session(session_id: str):
+    from PIL import Image, ImageDraw, ImageFont
+    
+    session_file = os.path.join(UPLOAD_DIR, session_id, "annotation_input.json")
+    if not os.path.exists(session_file):
+        raise HTTPException(status_code=404, detail="Session does not exist.")
+    
+    with open(session_file, "r", encoding="utf-8") as f:
+        stored_data = json.load(f)
+    
+    # Color map keyed by DocLayNet type names (lowercase with underscores)
+    CLASS_COLORS = {
+        'title':          '#E63946',
+        'section_header': '#FF6B35',
+        'text':           '#457B9D',
+        'list_item':      '#2A9D8F',
+        'table':          '#E9C46A',
+        'picture':        '#F4A261',
+        'caption':        '#8ECAE6',
+        'footnote':       '#A8DADC',
+        'formula':        '#6D6875',
+        'page_header':    '#B5838D',
+        'page_footer':    '#E5989B',
+    }
+    
+    CLASS_LABELS = {
+        'title':          'Title',
+        'section_header': 'Section-header',
+        'text':           'Text',
+        'list_item':      'List-item',
+        'table':          'Table',
+        'picture':        'Picture',
+        'caption':        'Caption',
+        'footnote':       'Footnote',
+        'formula':        'Formula',
+        'page_header':    'Page-header',
+        'page_footer':    'Page-footer',
+    }
+    
+    def hex_to_rgba(hex_color: str, alpha: int = 255):
+        r = int(hex_color[1:3], 16)
+        g = int(hex_color[3:5], 16)
+        b = int(hex_color[5:7], 16)
+        return (r, g, b, alpha)
+    
+    session_dir = os.path.join(UPLOAD_DIR, session_id)
+    annotated_images = []
+    
+    # Sort pages numerically
+    sorted_pages = sorted(stored_data.keys(), key=lambda x: int(x))
+    
+    for page_str in sorted_pages:
+        page_data = stored_data[page_str]
+        page_num = int(page_str)
+        
+        # Load the original page PNG
+        png_path = os.path.join(session_dir, f"page_{page_num:02d}_original.png")
+        if not os.path.exists(png_path):
+            continue
+        
+        img = Image.open(png_path).convert("RGBA")
+        
+        # Get detections: prefer ground_truth, then model_a (DocLayoutYOLO)
+        detections = page_data.get("ground_truth")
+        if detections is None:
+            detections = page_data.get("model_a", {}).get("detections", [])
+        
+        # Create a transparent overlay for filled rectangles
+        overlay = Image.new("RGBA", img.size, (0, 0, 0, 0))
+        overlay_draw = ImageDraw.Draw(overlay)
+        
+        # Draw on the base image for borders and text
+        draw = ImageDraw.Draw(img)
+        
+        # Try to load a small font
+        try:
+            font = ImageFont.truetype("arial.ttf", 14)
+        except (IOError, OSError):
+            try:
+                font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 14)
+            except (IOError, OSError):
+                font = ImageFont.load_default()
+        
+        for det in detections:
+            det_type = det.get("type", "text")
+            bbox = det.get("bbox", [0, 0, 0, 0])
+            x0, y0, x1, y1 = [int(round(v)) for v in bbox]
+            
+            color_hex = CLASS_COLORS.get(det_type, '#46f1c5')
+            fill_rgba = hex_to_rgba(color_hex, alpha=64)   # 25% opacity
+            border_rgb = hex_to_rgba(color_hex, alpha=255)[:3]
+            
+            # Draw filled rectangle on overlay
+            overlay_draw.rectangle([x0, y0, x1, y1], fill=fill_rgba)
+            
+            # Draw border
+            for offset in range(2):  # 2px border
+                draw.rectangle([x0 - offset, y0 - offset, x1 + offset, y1 + offset], outline=border_rgb)
+            
+            # Draw label
+            label = CLASS_LABELS.get(det_type, det_type.upper())
+            try:
+                text_bbox = font.getbbox(label)
+                tw = text_bbox[2] - text_bbox[0]
+                th = text_bbox[3] - text_bbox[1]
+            except AttributeError:
+                tw, th = draw.textsize(label, font=font)
+            
+            pill_h = th + 6
+            pill_w = tw + 10
+            # Dark background pill
+            draw.rectangle([x0, y0 - pill_h, x0 + pill_w, y0], fill=(30, 30, 30, 220))
+            draw.text((x0 + 5, y0 - pill_h + 3), label, fill=border_rgb, font=font)
+        
+        # Composite overlay onto image
+        img = Image.alpha_composite(img, overlay)
+        # Convert back to RGB for PDF
+        annotated_images.append(img.convert("RGB"))
+    
+    if not annotated_images:
+        raise HTTPException(status_code=500, detail="No pages found to render.")
+    
+    # Compile into PDF
+    pdf_buffer = io.BytesIO()
+    if len(annotated_images) == 1:
+        annotated_images[0].save(pdf_buffer, format="PDF")
+    else:
+        annotated_images[0].save(
+            pdf_buffer,
+            format="PDF",
+            save_all=True,
+            append_images=annotated_images[1:]
+        )
+    pdf_buffer.seek(0)
+    
+    short_id = session_id[:8]
+    return StreamingResponse(
+        pdf_buffer,
+        media_type="application/pdf",
+        headers={
+            "Content-Disposition": f'attachment; filename="ground_truth_{short_id}.pdf"'
+        }
+    )
+
 
 @app.get("/api/images/{session_id}/{filename}")
 async def serve_image(session_id: str, filename: str):

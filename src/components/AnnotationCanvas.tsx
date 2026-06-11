@@ -305,6 +305,8 @@ export const AnnotationCanvas: React.FC<AnnotationCanvasProps> = ({ detections, 
         // Verify minimum drag threshold
         if (w > 6 && h > 6) {
           addDetection(selectedDrawClassRef.current, [x0, y0, x1, y1]);
+          // Issue 1: Auto-close class picker & return to PAN mode
+          setCanvasMode('pan');
         }
       }
       isDrawingRef.current = false;

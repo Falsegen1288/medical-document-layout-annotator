@@ -9,6 +9,8 @@ interface PipelineLog {
   percent: number;
 }
 
+type BaseModelChoice = 'DL' | 'NM' | 'blank';
+
 interface AnnotationState {
   // Session details
   sessionId: string | null;
@@ -16,14 +18,14 @@ interface AnnotationState {
   modelsFound: string[];
   pages: PageData[];
   currentPageIndex: number;
-  activeModelTab: 'ADE' | 'DL' | 'NM' | 'GT';
+  activeModelTab: 'DL' | 'NM' | 'GT';
   workingDetections: Detection[];
   hoveredDetectionIndex: number | null;
   
   // Pipeline status
   isUploading: boolean;
   uploadPercent: number;
-  pipelineStep: number; // 1: Upload, 2: Extract, 3: YOLO, 4: Nemotron, 5: ADE
+  pipelineStep: number; // 1: Upload, 2: Extract, 3: YOLO, 4: Nemotron
   pipelineLogs: string[];
   
   // Intake configuration
@@ -37,6 +39,13 @@ interface AnnotationState {
   showUndoToast: boolean;
   toastMessage: string;
   
+  // Issue 3: Base model selection per page
+  baseModelPerPage: Record<number, BaseModelChoice>;
+  
+  // Issue 4: Dirty state tracking
+  dirtyPages: number[];
+  savedEditsPerPage: Record<number, Detection[]>;
+  
   // Actions
   setPdfFile: (file: File) => void;
   setSelectedPageRange: (range: string) => void;
@@ -44,9 +53,10 @@ interface AnnotationState {
   connectSSE: (sessionId: string) => void;
   loadSessionData: (sessionId: string) => Promise<void>;
   changePage: (index: number) => void;
-  setActiveModelTab: (tab: 'ADE' | 'DL' | 'NM' | 'GT') => void;
+  forceChangePage: (index: number) => void;
+  setActiveModelTab: (tab: 'DL' | 'NM' | 'GT') => void;
   setHoveredDetectionIndex: (idx: number | null) => void;
-  initWorkingDetections: (base: 'ADE' | 'DL' | 'NM' | 'blank') => void;
+  initWorkingDetections: (base: BaseModelChoice) => void;
   updateDetection: (idx: number, patch: Partial<Detection>) => void;
   deleteDetection: (idx: number) => void;
   addDetection: (type: DocLayClass, bbox: [number, number, number, number]) => void;
@@ -57,6 +67,12 @@ interface AnnotationState {
   importJsonData: (jsonText: string) => string | null;
   exportGroundTruth: () => void;
   resetAllData: () => Promise<void>;
+  
+  // Issue 4: Save/discard per page
+  markPageDirty: () => void;
+  savePageEdits: (pageIndex: number) => Promise<void>;
+  discardPageEdits: (pageIndex: number) => void;
+  isPageDirty: (pageIndex: number) => boolean;
 }
 
 const BACKEND_URL = 'http://127.0.0.1:8000';
@@ -71,7 +87,7 @@ export const useAnnotationStore = create<AnnotationState>((set, get) => {
     modelsFound: [],
     pages: [],
     currentPageIndex: 0,
-    activeModelTab: 'GT',
+    activeModelTab: 'DL',
     workingDetections: [],
     hoveredDetectionIndex: null,
     
@@ -88,6 +104,13 @@ export const useAnnotationStore = create<AnnotationState>((set, get) => {
     undoStack: [],
     showUndoToast: false,
     toastMessage: '',
+    
+    // Issue 3
+    baseModelPerPage: {},
+    
+    // Issue 4
+    dirtyPages: [],
+    savedEditsPerPage: {},
     
     // Setters
     setPdfFile: (file: File) => {
@@ -188,7 +211,6 @@ export const useAnnotationStore = create<AnnotationState>((set, get) => {
           let stepNum = get().pipelineStep;
           if (logData.step.includes('model_a')) stepNum = 3;
           else if (logData.step.includes('model_b')) stepNum = 4;
-          else if (logData.step.includes('model_c')) stepNum = 5;
           
           set((state) => ({
             pipelineStep: stepNum,
@@ -237,17 +259,24 @@ export const useAnnotationStore = create<AnnotationState>((set, get) => {
           pages: pagesList,
           currentPageIndex: 0,
           status: 'results',
-          activeModelTab: 'GT'
+          activeModelTab: 'DL'
         });
         
         // Populate first page detections
         if (pagesList.length > 0) {
+          const { savedEditsPerPage } = get();
           const firstPage = pagesList[0];
-          set({
-            workingDetections: firstPage.ground_truth !== null 
-              ? firstPage.ground_truth 
-              : firstPage.model_c.detections
-          });
+          
+          // Issue 4: Restore from saved edits if available
+          if (savedEditsPerPage[0]) {
+            set({ workingDetections: savedEditsPerPage[0] });
+          } else {
+            set({
+              workingDetections: firstPage.ground_truth !== null 
+                ? firstPage.ground_truth 
+                : firstPage.model_a.detections
+            });
+          }
         }
       } catch (err: any) {
         console.error(err);
@@ -255,22 +284,37 @@ export const useAnnotationStore = create<AnnotationState>((set, get) => {
       }
     },
     
+    // changePage is now a "request" — Annotate.tsx intercepts for dirty guard
     changePage: (index: number) => {
-      const { pages } = get();
+      get().forceChangePage(index);
+    },
+    
+    // Issue 4: Direct page change without guard (called after modal decision)
+    forceChangePage: (index: number) => {
+      const { pages, savedEditsPerPage } = get();
       if (index >= 0 && index < pages.length) {
         const targetPage = pages[index];
+        
+        // Issue 4: Restore saved edits if available
+        let nextDetections: Detection[];
+        if (savedEditsPerPage[index]) {
+          nextDetections = savedEditsPerPage[index];
+        } else {
+          nextDetections = targetPage.ground_truth !== null 
+            ? targetPage.ground_truth 
+            : targetPage.model_a.detections;
+        }
+        
         set({
           currentPageIndex: index,
-          workingDetections: targetPage.ground_truth !== null 
-            ? targetPage.ground_truth 
-            : targetPage.model_c.detections,
+          workingDetections: nextDetections,
           hoveredDetectionIndex: null,
           undoStack: []
         });
       }
     },
     
-    setActiveModelTab: (tab: 'ADE' | 'DL' | 'NM' | 'GT') => {
+    setActiveModelTab: (tab: 'DL' | 'NM' | 'GT') => {
       set({ activeModelTab: tab });
     },
     
@@ -278,15 +322,13 @@ export const useAnnotationStore = create<AnnotationState>((set, get) => {
       set({ hoveredDetectionIndex: idx });
     },
     
-    initWorkingDetections: (base: 'ADE' | 'DL' | 'NM' | 'blank') => {
+    initWorkingDetections: (base: BaseModelChoice) => {
       const { pages, currentPageIndex } = get();
       const currentPage = pages[currentPageIndex];
       if (!currentPage) return;
       
       let nextDetections: Detection[] = [];
-      if (base === 'ADE') {
-        nextDetections = currentPage.model_c.detections.map(d => ({ ...d, model: 'ADE-DPT2' }));
-      } else if (base === 'DL') {
+      if (base === 'DL') {
         nextDetections = currentPage.model_a.detections.map(d => ({ ...d, model: 'DocLayoutYOLO' }));
       } else if (base === 'NM') {
         nextDetections = currentPage.model_b.detections.map(d => ({ ...d, model: 'Nemotron-Parse-v1.1' }));
@@ -294,18 +336,35 @@ export const useAnnotationStore = create<AnnotationState>((set, get) => {
         nextDetections = [];
       }
       
-      set({
+      set((state) => ({
         workingDetections: nextDetections,
         activeModelTab: 'GT', // automatically return focus to GT editing
+        // Issue 3: Track base model selection per page
+        baseModelPerPage: {
+          ...state.baseModelPerPage,
+          [currentPageIndex]: base
+        },
+        // Issue 4: Mark page dirty since we replaced detections
+        dirtyPages: state.dirtyPages.includes(currentPageIndex)
+          ? state.dirtyPages
+          : [...state.dirtyPages, currentPageIndex],
         toastMessage: `Initialized workspace from ${base === 'blank' ? 'blank slate' : base}`,
         showUndoToast: true
-      });
+      }));
       
       setTimeout(() => {
         if (get().toastMessage.includes(`Initialized workspace`)) {
           set({ showUndoToast: false });
         }
       }, 4000);
+    },
+    
+    // Issue 4: Mark current page as dirty
+    markPageDirty: () => {
+      const { currentPageIndex, dirtyPages } = get();
+      if (!dirtyPages.includes(currentPageIndex)) {
+        set({ dirtyPages: [...dirtyPages, currentPageIndex] });
+      }
     },
     
     updateDetection: (idx: number, patch: Partial<Detection>) => {
@@ -318,6 +377,8 @@ export const useAnnotationStore = create<AnnotationState>((set, get) => {
         };
         return { workingDetections: updated };
       });
+      // Issue 4: Mark dirty
+      get().markPageDirty();
     },
     
     deleteDetection: (idx: number) => {
@@ -331,6 +392,9 @@ export const useAnnotationStore = create<AnnotationState>((set, get) => {
         toastMessage: `Removed detection #${idx + 1} (${target.type})`,
         showUndoToast: true
       }));
+      
+      // Issue 4: Mark dirty
+      get().markPageDirty();
       
       setTimeout(() => {
         if (get().toastMessage.includes(`Removed detection`)) {
@@ -353,11 +417,85 @@ export const useAnnotationStore = create<AnnotationState>((set, get) => {
         showUndoToast: true
       }));
       
+      // Issue 4: Mark dirty
+      get().markPageDirty();
+      
       setTimeout(() => {
         if (get().toastMessage.includes(`Added new`)) {
           set({ showUndoToast: false });
         }
       }, 4000);
+    },
+    
+    // Issue 4: Save page edits to backend and local cache
+    savePageEdits: async (pageIndex: number) => {
+      const { sessionId, pages, workingDetections } = get();
+      if (!sessionId || pages.length === 0) return;
+      
+      const currentPage = pages[pageIndex];
+      
+      try {
+        const response = await fetch(`${BACKEND_URL}/api/session/${sessionId}/save-page`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            page: currentPage.page,
+            detections: workingDetections.map(d => ({ ...d, model: 'human' }))
+          })
+        });
+        
+        if (!response.ok) {
+          throw new Error('Failed to save page edits.');
+        }
+        
+        // Store in local cache and clear dirty flag
+        set((state) => ({
+          savedEditsPerPage: {
+            ...state.savedEditsPerPage,
+            [pageIndex]: workingDetections.map(d => ({ ...d, model: 'human' }))
+          },
+          dirtyPages: state.dirtyPages.filter(p => p !== pageIndex),
+        }));
+        
+        // Also update pages array ground_truth
+        set((state) => {
+          const updatedPages = [...state.pages];
+          updatedPages[pageIndex] = {
+            ...updatedPages[pageIndex],
+            ground_truth: workingDetections.map(d => ({ ...d, model: 'human' }))
+          };
+          return { pages: updatedPages };
+        });
+        
+      } catch (err: any) {
+        alert(`Save failed: ${err.message}`);
+      }
+    },
+    
+    // Issue 4: Discard edits, restore from saved or original
+    discardPageEdits: (pageIndex: number) => {
+      const { pages, savedEditsPerPage } = get();
+      const targetPage = pages[pageIndex];
+      if (!targetPage) return;
+      
+      let restored: Detection[];
+      if (savedEditsPerPage[pageIndex]) {
+        restored = savedEditsPerPage[pageIndex];
+      } else {
+        restored = targetPage.ground_truth !== null
+          ? targetPage.ground_truth
+          : targetPage.model_a.detections;
+      }
+      
+      set((state) => ({
+        workingDetections: restored,
+        dirtyPages: state.dirtyPages.filter(p => p !== pageIndex),
+      }));
+    },
+    
+    // Issue 4: Check if a page is dirty
+    isPageDirty: (pageIndex: number) => {
+      return get().dirtyPages.includes(pageIndex);
     },
     
     confirmPage: async () => {
@@ -393,10 +531,16 @@ export const useAnnotationStore = create<AnnotationState>((set, get) => {
           throw new Error('Failed to save to backend disk.');
         }
         
-        set({
+        // Also update savedEditsPerPage and clear dirty
+        set((state) => ({
+          savedEditsPerPage: {
+            ...state.savedEditsPerPage,
+            [currentPageIndex]: workingDetections.map(d => ({ ...d, model: 'human' }))
+          },
+          dirtyPages: state.dirtyPages.filter(p => p !== currentPageIndex),
           toastMessage: `Confirmed page ${currentPage.page} ground truth! Saved to disk.`,
           showUndoToast: true
-        });
+        }));
         
         setTimeout(() => {
           if (get().toastMessage.includes(`Confirmed page`)) {
@@ -497,7 +641,7 @@ export const useAnnotationStore = create<AnnotationState>((set, get) => {
           const currentPage = updatedPages[state.currentPageIndex];
           const nextWorking = currentPage.ground_truth !== null 
             ? currentPage.ground_truth 
-            : currentPage.model_c.detections;
+            : currentPage.model_a.detections;
             
           return {
             pages: updatedPages,
@@ -545,7 +689,7 @@ export const useAnnotationStore = create<AnnotationState>((set, get) => {
         modelsFound: [],
         pages: [],
         currentPageIndex: 0,
-        activeModelTab: 'GT',
+        activeModelTab: 'DL',
         workingDetections: [],
         hoveredDetectionIndex: null,
         
@@ -561,7 +705,11 @@ export const useAnnotationStore = create<AnnotationState>((set, get) => {
         
         undoStack: [],
         showUndoToast: false,
-        toastMessage: ''
+        toastMessage: '',
+        
+        baseModelPerPage: {},
+        dirtyPages: [],
+        savedEditsPerPage: {},
       });
     }
   };

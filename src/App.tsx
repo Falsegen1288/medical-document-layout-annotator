@@ -25,6 +25,7 @@ type AppTab = 'dashboard' | 'annotate' | 'compare' | 'export';
 function MainAppShell() {
   const store = useAnnotationStore();
   const [activeTab, setActiveTab] = useState<AppTab>('dashboard');
+  const [isCommitting, setIsCommitting] = useState(false);
 
   // Automatically reset tab to dashboard if session is reset
   useEffect(() => {
@@ -34,13 +35,32 @@ function MainAppShell() {
   }, [store.status]);
 
   const handleCommitSession = async () => {
-    if (store.status !== 'results') {
+    if (store.status !== 'results' || !store.sessionId) {
       alert('No active session to commit.');
       return;
     }
-    // Commit the current page changes to the backend
-    await store.confirmPage();
-    alert('Session successfully committed! Ground truth annotations have been safely saved to the server database.');
+    setIsCommitting(true);
+    try {
+      const response = await fetch(`http://127.0.0.1:8000/api/session/${store.sessionId}/commit`, {
+        method: 'POST',
+      });
+      if (!response.ok) {
+        throw new Error('Failed to generate PDF.');
+      }
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `ground_truth_${store.sessionId.slice(0, 8)}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    } catch (err: any) {
+      alert(`Commit failed: ${err.message}`);
+    } finally {
+      setIsCommitting(false);
+    }
   };
 
   const hasActiveSession = store.status === 'results' && store.pages.length > 0;
@@ -91,11 +111,20 @@ function MainAppShell() {
         <div className="flex items-center gap-3">
           <button 
             onClick={handleCommitSession}
-            disabled={!hasActiveSession}
+            disabled={!hasActiveSession || isCommitting}
             className="bg-primary-container text-on-primary-container disabled:opacity-40 disabled:cursor-not-allowed hover:brightness-110 active:scale-95 px-4 h-8 text-[11px] font-bold font-mono tracking-wider uppercase transition-all rounded-xs cursor-pointer flex items-center gap-1"
           >
-            <Save className="w-3.5 h-3.5" />
-            Commit Session
+            {isCommitting ? (
+              <>
+                <div className="w-3.5 h-3.5 border-2 border-on-primary-container border-t-transparent rounded-full animate-spin" />
+                Generating PDF...
+              </>
+            ) : (
+              <>
+                <Save className="w-3.5 h-3.5" />
+                Commit Session
+              </>
+            )}
           </button>
           <div className="h-5 w-px bg-border"></div>
           <div className="flex items-center gap-1.5 text-on-surface-variant">
