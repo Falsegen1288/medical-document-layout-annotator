@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useState, useCallback } from 'react';
 import { Detection, CLASS_COLORS, CLASS_LABELS, DocLayClass } from '../types';
 import { useAnnotation } from '../context/AnnotationContext';
-import { Maximize, Minimize, RotateCcw, Move, PenTool, Check } from 'lucide-react';
+import { Move, PenTool } from 'lucide-react';
 
 interface AnnotationCanvasProps {
   detections: Detection[];
@@ -13,7 +13,6 @@ export const AnnotationCanvas: React.FC<AnnotationCanvasProps> = ({ detections, 
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const imageRef = useRef<HTMLImageElement | null>(null);
-  const [imgReady, setImgReady] = useState(false);
   const [loading, setLoading] = useState<boolean>(true);
 
   // Mode: 'pan' or 'draw'
@@ -26,77 +25,48 @@ export const AnnotationCanvas: React.FC<AnnotationCanvasProps> = ({ detections, 
   const panY = useRef<number>(0);
   const [zoomDisplay, setZoomDisplay] = useState<number>(100);
 
-  // Drawing States
-  const [isDrawing, setIsDrawing] = useState<boolean>(false);
-  const [drawStart, setDrawStart] = useState<{ x: number; y: number } | null>(null);
-  const [drawingBbox, setDrawingBbox] = useState<[number, number, number, number] | null>(null);
+  // Drawing States — ALL in refs to prevent re-render during drag
+  const isDrawingRef = useRef<boolean>(false);
+  const drawStartRef = useRef<{ x: number; y: number } | null>(null);
+  const drawingBboxRef = useRef<[number, number, number, number] | null>(null);
 
   // Interaction state
   const isDragging = useRef<boolean>(false);
   const lastWheel = useRef<number>(0);
+  const rafId = useRef<number>(0);
 
-  // Handle ResizeObserver
-  const [resizedDimensions, setResizedDimensions] = useState({ width: 600, height: 750 });
-  useEffect(() => {
-    if (!containerRef.current) return;
-    const observer = new ResizeObserver((entries) => {
-      for (const entry of entries) {
-        setResizedDimensions({
-          width: Math.floor(entry.contentRect.width),
-          height: Math.floor(containerRef.current?.clientHeight || 650)
-        });
-      }
-    });
-    observer.observe(containerRef.current);
-    return () => observer.disconnect();
-  }, []);
+  // Store latest props/state in refs for stable redraw access
+  const detectionsRef = useRef<Detection[]>(detections);
+  const hoveredIndexRef = useRef<number | null>(hoveredDetectionIndex);
+  const selectedDrawClassRef = useRef<DocLayClass>(selectedDrawClass);
+  const canvasModeRef = useRef<'pan' | 'draw'>(canvasMode);
 
-  // EFFECT 1: Load image ONCE when imagePath changes, store in useRef
-  useEffect(() => {
-    if (!imagePath) return;
-    setImgReady(false);
-    setLoading(true);
+  // Keep refs synced with latest values
+  detectionsRef.current = detections;
+  hoveredIndexRef.current = hoveredDetectionIndex;
+  selectedDrawClassRef.current = selectedDrawClass;
+  canvasModeRef.current = canvasMode;
 
-    const img = new Image();
-    img.onload = () => {
-      imageRef.current = img;
-      setImgReady(true);
-      setLoading(false);
-      resetZoom(img);
-    };
-    img.onerror = (e) => {
-      console.error('Failed to load canvas image:', imagePath, e);
-      setLoading(false);
-    };
-    img.src = imagePath;
-  }, [imagePath]);
+  // Canvas dimensions managed via ref + direct DOM mutation (no React re-render)
+  const canvasWidth = useRef<number>(600);
+  const canvasHeight = useRef<number>(750);
 
-  const resetZoom = (loadedImg?: HTMLImageElement) => {
-    const activeImage = loadedImg || imageRef.current;
-    if (!activeImage || !containerRef.current) return;
-
-    const w = containerRef.current.clientWidth || 600;
-    const h = containerRef.current.clientHeight || 750;
-
-    const scaleX = (w - 60) / activeImage.width;
-    const scaleY = (h - 60) / activeImage.height;
-    const fitScale = Math.min(scaleX, scaleY, 1);
-
-    zoom.current = fitScale;
-    panX.current = (w - activeImage.width * fitScale) / 2;
-    panY.current = (h - activeImage.height * fitScale) / 2;
-    setZoomDisplay(Math.round(fitScale * 100));
+  // ─── Utility ───────────────────────────────────────────
+  const hexToRgba = (hex: string, alpha: number) => {
+    const r = parseInt(hex.slice(1, 3), 16);
+    const g = parseInt(hex.slice(3, 5), 16);
+    const b = parseInt(hex.slice(5, 7), 16);
+    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
   };
 
-  // EFFECT 2: Redraw canvas when image is ready OR when zoom/pan/detections change
+  // ─── Core Redraw (reads ONLY from refs, zero React deps) ───
   const redrawCanvas = useCallback(() => {
     const canvas = canvasRef.current;
-    if (!canvas || !imageRef.current) return;
+    const image = imageRef.current;
+    if (!canvas || !image || !image.complete || image.naturalWidth === 0) return;
 
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
-
-    const image = imageRef.current;
 
     // Clear background
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -110,12 +80,14 @@ export const AnnotationCanvas: React.FC<AnnotationCanvasProps> = ({ detections, 
     ctx.drawImage(image, 0, 0);
 
     // 2. Draw existing bboxes
-    detections.forEach((det, idx) => {
+    const dets = detectionsRef.current;
+    const hovIdx = hoveredIndexRef.current;
+    dets.forEach((det, idx) => {
       const [x0, y0, x1, y1] = det.bbox;
       const w = x1 - x0;
       const h = y1 - y0;
       const color = CLASS_COLORS[det.type] || '#46f1c5';
-      const isHovered = hoveredDetectionIndex === idx;
+      const isHovered = hovIdx === idx;
 
       const alpha = isHovered ? 0.35 : 0.15;
       ctx.fillStyle = hexToRgba(color, alpha);
@@ -141,9 +113,10 @@ export const AnnotationCanvas: React.FC<AnnotationCanvasProps> = ({ detections, 
     });
 
     // 3. Draw active drawing dashed rectangle
-    if (drawingBbox) {
-      const [x0, y0, x1, y1] = drawingBbox;
-      const drawColor = CLASS_COLORS[selectedDrawClass] || '#46f1c5';
+    const drawBbox = drawingBboxRef.current;
+    if (drawBbox) {
+      const [x0, y0, x1, y1] = drawBbox;
+      const drawColor = CLASS_COLORS[selectedDrawClassRef.current] || '#46f1c5';
       ctx.fillStyle = hexToRgba(drawColor, 0.25);
       ctx.fillRect(x0, y0, x1 - x0, y1 - y0);
 
@@ -157,7 +130,7 @@ export const AnnotationCanvas: React.FC<AnnotationCanvasProps> = ({ detections, 
       ctx.fillStyle = drawColor;
       const drawFontHeight = Math.max(10, Math.floor(11 / zoom.current));
       ctx.font = `bold ${drawFontHeight}px JetBrains Mono, monospace`;
-      const sizeTag = `${CLASS_LABELS[selectedDrawClass].toUpperCase()} (${Math.round(x1 - x0)}x${Math.round(y1 - y0)})`;
+      const sizeTag = `${CLASS_LABELS[selectedDrawClassRef.current].toUpperCase()} (${Math.round(x1 - x0)}x${Math.round(y1 - y0)})`;
       const sizeTagWidth = ctx.measureText(sizeTag).width;
       ctx.fillRect(x0, y0 - drawFontHeight - 4, sizeTagWidth + 8, drawFontHeight + 4);
       ctx.fillStyle = '#ffffff';
@@ -165,44 +138,95 @@ export const AnnotationCanvas: React.FC<AnnotationCanvasProps> = ({ detections, 
     }
 
     ctx.restore();
-  }, [detections, hoveredDetectionIndex, selectedDrawClass, drawingBbox]);
+  }, []); // Zero deps — reads everything from refs
 
+  // Schedule a single-shot rAF redraw (coalesces multiple calls per frame)
+  const scheduleRedraw = useCallback(() => {
+    cancelAnimationFrame(rafId.current);
+    rafId.current = requestAnimationFrame(redrawCanvas);
+  }, [redrawCanvas]);
+
+  // ─── EFFECT 1: Load image ONCE when imagePath changes ─────
   useEffect(() => {
-    if (!imgReady || !imageRef.current) return;
-    redrawCanvas();
-  }, [imgReady, redrawCanvas]);
+    if (!imagePath) return;
+    setLoading(true);
 
-  const hexToRgba = (hex: string, alpha: number) => {
-    const r = parseInt(hex.slice(1, 3), 16);
-    const g = parseInt(hex.slice(3, 5), 16);
-    const b = parseInt(hex.slice(5, 7), 16);
-    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+    const img = new Image();
+    img.onload = () => {
+      imageRef.current = img;
+      setLoading(false);
+      resetZoom(img);
+      scheduleRedraw();
+    };
+    img.onerror = (e) => {
+      console.error('Failed to load canvas image:', imagePath, e);
+      setLoading(false);
+    };
+    img.src = imagePath;
+  }, [imagePath, scheduleRedraw]);
+
+  const resetZoom = (loadedImg?: HTMLImageElement) => {
+    const activeImage = loadedImg || imageRef.current;
+    if (!activeImage || !containerRef.current) return;
+
+    const w = containerRef.current.clientWidth || 600;
+    const h = containerRef.current.clientHeight || 750;
+
+    const scaleX = (w - 60) / activeImage.width;
+    const scaleY = (h - 60) / activeImage.height;
+    const fitScale = Math.min(scaleX, scaleY, 1);
+
+    zoom.current = fitScale;
+    panX.current = (w - activeImage.width * fitScale) / 2;
+    panY.current = (h - activeImage.height * fitScale) / 2;
+    setZoomDisplay(Math.round(fitScale * 100));
   };
 
-  const getCanvasCoords = (e: React.MouseEvent<HTMLCanvasElement> | WheelEvent) => {
+  // ─── EFFECT 2: Resize canvas buffer via DOM (no React re-render) ───
+  useEffect(() => {
+    if (!containerRef.current) return;
+    const observer = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        const newW = Math.floor(entry.contentRect.width);
+        const newH = Math.floor(containerRef.current?.clientHeight || 650);
+
+        // Only update if actually changed
+        if (newW === canvasWidth.current && newH === canvasHeight.current) return;
+        canvasWidth.current = newW;
+        canvasHeight.current = newH;
+
+        // Direct DOM mutation — no setState, no re-render
+        const canvas = canvasRef.current;
+        if (canvas) {
+          canvas.width = newW;
+          canvas.height = newH;
+          scheduleRedraw();
+        }
+      }
+    });
+    observer.observe(containerRef.current);
+    return () => observer.disconnect();
+  }, [scheduleRedraw]);
+
+  // ─── EFFECT 3: Redraw when detections or hover changes ───
+  useEffect(() => {
+    scheduleRedraw();
+  }, [detections, hoveredDetectionIndex, scheduleRedraw]);
+
+  // ─── Canvas coordinate conversion ───
+  const getCanvasCoords = (clientX: number, clientY: number) => {
     if (!canvasRef.current || !imageRef.current) return null;
     const rect = canvasRef.current.getBoundingClientRect();
-    
-    let clientX: number, clientY: number;
-    if (e instanceof WheelEvent) {
-      clientX = e.clientX;
-      clientY = e.clientY;
-    } else {
-      clientX = e.clientX;
-      clientY = e.clientY;
-    }
-
     const x = clientX - rect.left;
     const y = clientY - rect.top;
-
     const imgX = (x - panX.current) / zoom.current;
     const imgY = (y - panY.current) / zoom.current;
-
     return { x: imgX, y: imgY };
   };
 
+  // ─── Mouse Handlers ───
   const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
-    if (canvasMode === 'pan') {
+    if (canvasModeRef.current === 'pan') {
       if (isDragging.current) {
         const dx = e.clientX - (e.currentTarget as any).__lastX;
         const dy = e.clientY - (e.currentTarget as any).__lastY;
@@ -210,99 +234,105 @@ export const AnnotationCanvas: React.FC<AnnotationCanvasProps> = ({ detections, 
         panY.current += dy;
         (e.currentTarget as any).__lastX = e.clientX;
         (e.currentTarget as any).__lastY = e.clientY;
-        redrawCanvas();
+        scheduleRedraw();
         return;
       }
 
-      const coords = getCanvasCoords(e);
+      const coords = getCanvasCoords(e.clientX, e.clientY);
       if (!coords) return;
 
       let foundIdx: number | null = null;
-      for (let i = detections.length - 1; i >= 0; i--) {
-        const [x0, y0, x1, y1] = detections[i].bbox;
+      const dets = detectionsRef.current;
+      for (let i = dets.length - 1; i >= 0; i--) {
+        const [x0, y0, x1, y1] = dets[i].bbox;
         if (coords.x >= x0 && coords.x <= x1 && coords.y >= y0 && coords.y <= y1) {
           foundIdx = i;
           break;
         }
       }
 
-      if (foundIdx !== hoveredDetectionIndex) {
+      if (foundIdx !== hoveredIndexRef.current) {
         setHoveredDetectionIndex(foundIdx);
       }
-    } else if (canvasMode === 'draw') {
-      if (isDrawing && drawStart) {
-        const currentCoords = getCanvasCoords(e);
+    } else if (canvasModeRef.current === 'draw') {
+      if (isDrawingRef.current && drawStartRef.current) {
+        const currentCoords = getCanvasCoords(e.clientX, e.clientY);
         if (currentCoords) {
-          setDrawingBbox([
-            Math.min(drawStart.x, currentCoords.x),
-            Math.min(drawStart.y, currentCoords.y),
-            Math.max(drawStart.x, currentCoords.x),
-            Math.max(drawStart.y, currentCoords.y)
-          ]);
+          drawingBboxRef.current = [
+            Math.min(drawStartRef.current.x, currentCoords.x),
+            Math.min(drawStartRef.current.y, currentCoords.y),
+            Math.max(drawStartRef.current.x, currentCoords.x),
+            Math.max(drawStartRef.current.y, currentCoords.y)
+          ];
+          scheduleRedraw();
         }
       }
     }
   };
 
   const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
-    if (canvasMode === 'pan') {
-      if (e.button === 0 && hoveredDetectionIndex === null) {
+    if (canvasModeRef.current === 'pan') {
+      if (e.button === 0 && hoveredIndexRef.current === null) {
         isDragging.current = true;
         (e.currentTarget as any).__lastX = e.clientX;
         (e.currentTarget as any).__lastY = e.clientY;
       }
-    } else if (canvasMode === 'draw') {
+    } else if (canvasModeRef.current === 'draw') {
       if (activeModelTab !== 'GT') {
         alert('You must be on the "Current GT (Working)" tab to draw boxes.');
         return;
       }
       if (e.button === 0) {
-        const coords = getCanvasCoords(e);
+        const coords = getCanvasCoords(e.clientX, e.clientY);
         if (coords) {
-          setIsDrawing(true);
-          setDrawStart(coords);
-          setDrawingBbox([coords.x, coords.y, coords.x, coords.y]);
+          isDrawingRef.current = true;
+          drawStartRef.current = coords;
+          drawingBboxRef.current = [coords.x, coords.y, coords.x, coords.y];
         }
       }
     }
   };
 
-  const handleMouseUp = (e: React.MouseEvent<HTMLCanvasElement>) => {
-    if (canvasMode === 'pan') {
+  const handleMouseUp = () => {
+    if (canvasModeRef.current === 'pan') {
       isDragging.current = false;
-    } else if (canvasMode === 'draw') {
-      if (isDrawing && drawingBbox) {
-        const [x0, y0, x1, y1] = drawingBbox;
+    } else if (canvasModeRef.current === 'draw') {
+      if (isDrawingRef.current && drawingBboxRef.current) {
+        const [x0, y0, x1, y1] = drawingBboxRef.current;
         const w = x1 - x0;
         const h = y1 - y0;
 
         // Verify minimum drag threshold
         if (w > 6 && h > 6) {
-          addDetection(selectedDrawClass, [x0, y0, x1, y1]);
+          addDetection(selectedDrawClassRef.current, [x0, y0, x1, y1]);
         }
       }
-      setIsDrawing(false);
-      setDrawStart(null);
-      setDrawingBbox(null);
+      isDrawingRef.current = false;
+      drawStartRef.current = null;
+      drawingBboxRef.current = null;
+      scheduleRedraw();
     }
   };
 
   const handleMouseLeave = () => {
     isDragging.current = false;
-    setIsDrawing(false);
-    setDrawStart(null);
-    setDrawingBbox(null);
+    if (isDrawingRef.current) {
+      isDrawingRef.current = false;
+      drawStartRef.current = null;
+      drawingBboxRef.current = null;
+      scheduleRedraw();
+    }
     setHoveredDetectionIndex(null);
   };
 
-  // TASK 2: Fixed scroll zoom with normalization and throttling
+  // ─── Scroll Zoom ───
   const ZOOM_STEP = 0.12;
   const ZOOM_MIN = 0.15;
   const ZOOM_MAX = 6.0;
 
   const handleWheel = useCallback((e: WheelEvent) => {
     e.preventDefault();
-    
+
     // Throttle: max ~30 zoom steps/sec
     const now = performance.now();
     if (now - lastWheel.current < 32) return;
@@ -329,21 +359,21 @@ export const AnnotationCanvas: React.FC<AnnotationCanvasProps> = ({ detections, 
     zoom.current = newZoom;
 
     setZoomDisplay(Math.round(newZoom * 100));
-    redrawCanvas();
-  }, [redrawCanvas]);
+    scheduleRedraw();
+  }, [scheduleRedraw]);
 
   // Attach wheel listener with cleanup
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    
+
     canvas.addEventListener('wheel', handleWheel, { passive: false });
     return () => {
       canvas.removeEventListener('wheel', handleWheel);
     };
   }, [handleWheel]);
 
-  // TASK 3: Zoom button handlers
+  // ─── Zoom button handlers ───
   const applyZoom = useCallback((newZoom: number) => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -356,18 +386,20 @@ export const AnnotationCanvas: React.FC<AnnotationCanvasProps> = ({ detections, 
     panY.current = cy - ratio * (cy - panY.current);
     zoom.current = clamped;
     setZoomDisplay(Math.round(clamped * 100));
-    redrawCanvas();
-  }, [redrawCanvas]);
+    scheduleRedraw();
+  }, [scheduleRedraw]);
 
   const handleZoomIn = () => applyZoom(zoom.current + ZOOM_STEP);
   const handleZoomOut = () => applyZoom(zoom.current - ZOOM_STEP);
   const handleZoomReset = () => {
-    panX.current = 0;
-    panY.current = 0;
-    zoom.current = 1.0;
-    setZoomDisplay(100);
-    redrawCanvas();
+    resetZoom();
+    scheduleRedraw();
   };
+
+  // ─── Cleanup rAF on unmount ───
+  useEffect(() => {
+    return () => cancelAnimationFrame(rafId.current);
+  }, []);
 
   // Zoom button style constant
   const zoomBtnStyle: React.CSSProperties = {
@@ -385,9 +417,9 @@ export const AnnotationCanvas: React.FC<AnnotationCanvasProps> = ({ detections, 
   };
 
   return (
-    <div 
+    <div
       id="canvas_container_panel"
-      ref={containerRef} 
+      ref={containerRef}
       className="flex-1 w-full bg-surface-dim border border-border relative overflow-hidden flex items-center justify-center bg-grid-subtle transition-all h-[650px]"
       style={{ position: 'relative', width: '100%', height: '100%', overflow: 'hidden', background: '#111' }}
     >
@@ -401,17 +433,16 @@ export const AnnotationCanvas: React.FC<AnnotationCanvasProps> = ({ detections, 
           <canvas
             id="clinical_annotation_canvas"
             ref={canvasRef}
-            width={resizedDimensions.width}
-            height={resizedDimensions.height}
+            width={canvasWidth.current}
+            height={canvasHeight.current}
             onMouseMove={handleMouseMove}
             onMouseDown={handleMouseDown}
             onMouseUp={handleMouseUp}
             onMouseLeave={handleMouseLeave}
-            style={{ 
-              cursor: canvasMode === 'draw' ? 'crosshair' : isDragging.current ? 'grabbing' : hoveredDetectionIndex !== null ? 'pointer' : 'grab', 
-              display: 'block' 
+            style={{
+              cursor: canvasMode === 'draw' ? 'crosshair' : isDragging.current ? 'grabbing' : hoveredDetectionIndex !== null ? 'pointer' : 'grab',
+              display: 'block',
             }}
-            className="w-full h-full"
           />
 
           {/* ── Zoom Controls ─────────────────────────────── */}
@@ -476,12 +507,12 @@ export const AnnotationCanvas: React.FC<AnnotationCanvasProps> = ({ detections, 
             <div style={{ width:'1px', height:'16px', background:'#2a2a2a', margin:'0 3px' }}/>
 
             {/* Reset 1:1 button */}
-            <button onClick={handleZoomReset} title="Reset Zoom (1:1)"
+            <button onClick={handleZoomReset} title="Reset Zoom (Fit)"
               style={{ ...zoomBtnStyle, fontSize:'10px', fontFamily:'monospace',
                        padding:'3px 7px', letterSpacing:'0.05em' }}
               onMouseEnter={e => (e.currentTarget.style.color='#00ffcc')}
               onMouseLeave={e => (e.currentTarget.style.color='#888')}>
-              1:1
+              FIT
             </button>
           </div>
         </>
@@ -527,8 +558,8 @@ export const AnnotationCanvas: React.FC<AnnotationCanvasProps> = ({ detections, 
                 key={cls}
                 onClick={() => setSelectedDrawClass(cls)}
                 className={`flex items-center gap-1.5 px-2 py-1 border text-left font-mono text-[10px] cursor-pointer transition-all rounded-xs ${
-                  selectedDrawClass === cls 
-                    ? 'border-primary bg-primary/10 text-primary font-bold shadow-sm' 
+                  selectedDrawClass === cls
+                    ? 'border-primary bg-primary/10 text-primary font-bold shadow-sm'
                     : 'border-border/60 hover:border-primary text-on-surface'
                 }`}
               >
