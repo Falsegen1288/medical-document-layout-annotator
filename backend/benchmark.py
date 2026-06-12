@@ -136,7 +136,7 @@ def load_doclaynet_samples(n_samples=30, seed=42):
     print("Loading DocLayNet (test split, streaming)...")
     dln = load_dataset("ds4sd/DocLayNet", split="test", streaming=True, trust_remote_code=True)
     if seed is not None:
-        dln = dln.shuffle(seed=seed, buffer_size=100)
+        dln = dln.shuffle(seed=seed, buffer_size=10)
 
     samples = []
     iterator = iter(dln)
@@ -185,9 +185,10 @@ def load_publaynet_samples(n_samples=30, seed=42):
     import io
     print("Loading PubLayNet (val split, streaming)...")
     pub = load_dataset("shunk031/PubLayNet",
-                        split="validation", trust_remote_code=True, streaming=True)
+                        split="validation", trust_remote_code=True, streaming=True,
+                        batch_size=10)
     if seed is not None:
-        pub = pub.shuffle(seed=seed, buffer_size=100)
+        pub = pub.shuffle(seed=seed, buffer_size=10)
 
     samples = []
     iterator = iter(pub)
@@ -260,7 +261,7 @@ def load_docbank_samples(n_samples=30, seed=42):
     print("Loading DocBank (test split, streaming)...")
     dkb = load_dataset("liminghao1630/DocBank", split="test", trust_remote_code=True, streaming=True)
     if seed is not None:
-        dkb = dkb.shuffle(seed=seed, buffer_size=100)
+        dkb = dkb.shuffle(seed=seed, buffer_size=10)
 
     samples = []
     iterator = iter(dkb)
