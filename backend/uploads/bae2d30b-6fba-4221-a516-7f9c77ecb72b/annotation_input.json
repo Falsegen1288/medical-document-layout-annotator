@@ -1,0 +1,3279 @@
+{
+  "7": {
+    "page": 7,
+    "displayName": "Page 7",
+    "image_path": "/api/images/bae2d30b-6fba-4221-a516-7f9c77ecb72b/page_07_original.png",
+    "image_size": [
+      1275,
+      1650
+    ],
+    "model_a": {
+      "name": "DocLayoutYOLO",
+      "detections": [
+        {
+          "type": "section_header",
+          "bbox": [
+            112.50000000000001,
+            120.32437499999986,
+            1141.174791666668,
+            157.63093850053357
+          ],
+          "text": "PILLING \u00ae  AND KMEDIC \u00ae  SURGICAL INSTRUMENTS",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            112.50000000000001,
+            166.19937500000006,
+            552.4,
+            195.84630718514524
+          ],
+          "text": "Quality that builds confidence",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            112.49541666666664,
+            300.7310416666667,
+            592.2047916666668,
+            480.0772544001438
+          ],
+          "text": "For nearly 200 years, Pilling \u00ae  quality instruments have been provided to surgeons across the world to help improve the standard of patient care. The Pilling \u00ae Brand is especially known globally in t",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            112.49541666666664,
+            499.64770833333324,
+            583.3135416666669,
+            706.0522544001433
+          ],
+          "text": "George P. Pilling joined a company started in 1814 that fashioned jewelry and fraternal emblems and guided the business into a new role. As hospitals in the Philadelphia, Pennsylvania area needed new ",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            112.49541666666664,
+            725.6227083333329,
+            576.1981249999993,
+            823.8439210668103
+          ],
+          "text": "Today, the Pilling \u00ae  Brand is an important part of the Teleflex \u00ae  Brand portfolio, and continues its legacy in providing high quality, hand-crafted instrumentation that meets the surgeon's requireme",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "picture",
+          "bbox": [
+            172.83859252929688,
+            841.6160583496094,
+            1089.9150848388672,
+            1430.2104949951172
+          ],
+          "text": "",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "picture",
+          "bbox": [
+            1007.3632558186849,
+            1576.6251881917317,
+            1121.742884318034,
+            1620.5057779947915
+          ],
+          "text": "",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            628.11875,
+            300.71437499999973,
+            1094.3431249999999,
+            453.0189210668105
+          ],
+          "text": "Over the years, the Pilling \u00ae  Brand has maintained high standards of quality and continues to emphasize customer service and satisfaction. As surgical procedural needs change, specialty surgeons can ",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            628.1266666666667,
+            472.58937499999996,
+            1085.736041666667,
+            651.9605877334769
+          ],
+          "text": "KMedic \u00ae , another member of the Teleflex \u00ae  Family of brands, offers the most extensive line of orthopedic instruments with more than 2,000 patterns. Just like our Pilling \u00ae  brand, our KMedic \u00ae  Lin",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            1216.3583333333333,
+            1586.2497916666666,
+            1227.9416666666666,
+            1604.9030734169335
+          ],
+          "text": "7",
+          "model": "DocLayoutYOLO"
+        }
+      ]
+    },
+    "model_b": {
+      "name": "Nemotron-Parse-v1.1",
+      "detections": [
+        {
+          "type": "Page-header",
+          "bbox": [
+            1232.9224,
+            87.31040000000002,
+            1257.148,
+            332.25120000000004
+          ],
+          "text": "GENERAL INFORMATION",
+          "model": "Nemotron"
+        },
+        {
+          "type": "Title",
+          "bbox": [
+            106.34960000000001,
+            114.54880000000003,
+            1141.2936,
+            156.1232
+          ],
+          "text": "# PILLING<sup>\u00ae</sup> AND KMEDIC<sup>\u00ae</sup> SURGICAL INSTRUMENTS",
+          "model": "Nemotron"
+        },
+        {
+          "type": "Section-header",
+          "bbox": [
+            107.99759999999998,
+            162.67680000000001,
+            552.1336,
+            197.9024
+          ],
+          "text": "Quality that builds confidence",
+          "model": "Nemotron"
+        },
+        {
+          "type": "Text",
+          "bbox": [
+            109.6456,
+            293.7488,
+            589.2136,
+            479.2976
+          ],
+          "text": "For nearly 200 years, Pilling<sup>\u00ae</sup> quality instruments have been provided to surgeons across the world to help improve the standard of patient care. The Pilling<sup>\u00ae</sup> Brand is especially ",
+          "model": "Nemotron"
+        },
+        {
+          "type": "Text",
+          "bbox": [
+            109.6456,
+            493.8384,
+            582.7864,
+            704.9872
+          ],
+          "text": "George P. Pilling joined a company started in 1814 that fashioned jewelry and fraternal emblems and guided the business into a new role. As hospitals in the Philadelphia, Pennsylvania area needed new ",
+          "model": "Nemotron"
+        },
+        {
+          "type": "Text",
+          "bbox": [
+            109.6456,
+            720.9616,
+            573.0631999999999,
+            825.0
+          ],
+          "text": "Today, the Pilling<sup>\u00ae</sup> Brand is an important part of the Teleflex<sup>\u00ae</sup> Brand portfolio, and continues its legacy in providing high quality, hand-crafted instrumentation that meets the s",
+          "model": "Nemotron"
+        },
+        {
+          "type": "Text",
+          "bbox": [
+            624.6456000000001,
+            295.3872,
+            1089.7112,
+            453.69759999999997
+          ],
+          "text": "Over the years, the Pilling<sup>\u00ae</sup> Brand has maintained high standards of quality and continues to emphasize customer service and satisfaction. As surgical procedural needs change, specialty surg",
+          "model": "Nemotron"
+        },
+        {
+          "type": "Text",
+          "bbox": [
+            622.9976,
+            468.23839999999996,
+            1083.2839999999999,
+            652.1488
+          ],
+          "text": "KMedic<sup>\u00ae</sup>, another member of the Teleflex<sup>\u00ae</sup> Family of brands, offers the most extensive line of orthopedic instruments with more than 2,000 patterns. Just like our Pilling<sup>\u00ae</su",
+          "model": "Nemotron"
+        },
+        {
+          "type": "Page-footer",
+          "bbox": [
+            93.49520000000001,
+            1575.3872,
+            1231.4392,
+            1621.8768
+          ],
+          "text": "PILLINGINSTRUMENTS.COM TOLL FREE: 866.246.6990 CS@TELEFLEX.COM 7",
+          "model": "Nemotron"
+        }
+      ]
+    },
+    "model_c": {
+      "name": "ADE-DPT2",
+      "detections": []
+    },
+    "ground_truth": null
+  },
+  "15": {
+    "page": 15,
+    "displayName": "Page 15",
+    "image_path": "/api/images/bae2d30b-6fba-4221-a516-7f9c77ecb72b/page_15_original.png",
+    "image_size": [
+      1275,
+      1650
+    ],
+    "model_a": {
+      "name": "DocLayoutYOLO",
+      "detections": [
+        {
+          "type": "picture",
+          "bbox": [
+            103.57221762339275,
+            193.93526713053387,
+            1037.9588445027669,
+            984.2433293660482
+          ],
+          "text": "",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "section_header",
+          "bbox": [
+            168.646875,
+            1039.7239583333333,
+            378.05645833333335,
+            1054.6465837335468
+          ],
+          "text": "CROSS REFERENCE LIST",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "list",
+          "bbox": [
+            168.646875,
+            1063.2552083333333,
+            616.8356250000002,
+            1105.1285044001436
+          ],
+          "text": " Simplify instrument ordering by cross referencing instruments with leading suppliers",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "section_header",
+          "bbox": [
+            168.646875,
+            1135.5572916666665,
+            354.2502083333335,
+            1150.4799170668803
+          ],
+          "text": "PRICING/BUDGETING",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "list",
+          "bbox": [
+            168.646875,
+            1159.0885416666665,
+            640.2637500000001,
+            1175.968087733477
+          ],
+          "text": " Dollar values for each instrument, set, and specialty",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "list",
+          "bbox": [
+            168.646875,
+            1184.0885416666665,
+            657.9187500000002,
+            1225.961837733477
+          ],
+          "text": " Easy access to pricing to assist in budgeting and financial planning",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "section_header",
+          "bbox": [
+            168.646875,
+            1256.390625,
+            252.4135416666667,
+            1271.3132504002135
+          ],
+          "text": "REPORTS",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "list",
+          "bbox": [
+            168.646875,
+            1279.921875,
+            584.0231249999999,
+            1296.8014210668105
+          ],
+          "text": " Generate staff productivity and set use reports",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "list",
+          "bbox": [
+            168.646875,
+            1304.9218749999998,
+            656.5837500000001,
+            1346.7951710668103
+          ],
+          "text": " Track data on set usage to help identify both high and low set usage",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "section_header",
+          "bbox": [
+            678.0218749999999,
+            1039.7239583333333,
+            1092.2535416666672,
+            1054.6465837335468
+          ],
+          "text": "N-COMPASS SERVICES PROVIDED BY TELEFLEX:",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "list",
+          "bbox": [
+            678.0218749999999,
+            1063.2552083333333,
+            881.9618750000001,
+            1080.1347544001435
+          ],
+          "text": " Software installation",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "list",
+          "bbox": [
+            678.0218749999999,
+            1088.2552083333333,
+            955.1731250000006,
+            1105.1347544001435
+          ],
+          "text": " On-site physical set inventory",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "list",
+          "bbox": [
+            678.0218749999999,
+            1113.2552083333333,
+            932.1987500000006,
+            1130.1347544001437
+          ],
+          "text": " Data entry and verification",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "list",
+          "bbox": [
+            678.0218749999999,
+            1138.2552083333333,
+            1106.155,
+            1180.1285044001438
+          ],
+          "text": " Digital images of Pilling \u00ae , Weck \u00ae  and KMedic \u00ae Instruments",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "list",
+          "bbox": [
+            678.0218749999999,
+            1188.2552083333333,
+            1037.8981250000004,
+            1205.1347544001437
+          ],
+          "text": " Standardization of instrument patterns",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "list",
+          "bbox": [
+            678.0218749999999,
+            1213.2552083333333,
+            916.2387500000004,
+            1230.1347544001437
+          ],
+          "text": " Customized count sheets",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "list",
+          "bbox": [
+            678.0218749999999,
+            1238.2552083333333,
+            833.6787500000006,
+            1255.1347544001437
+          ],
+          "text": " On-site training",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            1120.8407240924093,
+            676.5655625,
+            1138.9941114583335,
+            684.3178216274753
+          ],
+          "text": "Set Name",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            1118.7546409674094,
+            680.9901722916667,
+            1138.1631970833325,
+            688.9637376691417
+          ],
+          "text": "Serial No.",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "picture",
+          "bbox": [
+            1007.3993682861328,
+            1576.6038258870442,
+            1121.7089335123699,
+            1620.681126912435
+          ],
+          "text": "",
+          "model": "DocLayoutYOLO"
+        }
+      ]
+    },
+    "model_b": {
+      "name": "Nemotron-Parse-v1.1",
+      "detections": [
+        {
+          "type": "Page-header",
+          "bbox": [
+            1229.7912000000001,
+            87.31040000000002,
+            1257.148,
+            330.6128
+          ],
+          "text": "# GENERAL INFORMATION",
+          "model": "Nemotron"
+        },
+        {
+          "type": "Section-header",
+          "bbox": [
+            166.0072,
+            1033.0768,
+            376.78639999999996,
+            1053.7616
+          ],
+          "text": "## CROSS REFERENCE LIST",
+          "model": "Nemotron"
+        },
+        {
+          "type": "List-item",
+          "bbox": [
+            167.49039999999997,
+            1060.1104,
+            613.4392,
+            1104.9616
+          ],
+          "text": "\u2022 Simplify instrument ordering by cross referencing instruments with leading suppliers",
+          "model": "Nemotron"
+        },
+        {
+          "type": "Section-header",
+          "bbox": [
+            164.3592,
+            1130.5616,
+            351.07759999999996,
+            1149.8128
+          ],
+          "text": "## PRICING/BUDGETING",
+          "model": "Nemotron"
+        },
+        {
+          "type": "List-item",
+          "bbox": [
+            167.49039999999997,
+            1156.1616,
+            637.5,
+            1175.4128
+          ],
+          "text": "\u2022 Dollar values for each instrument, set, and specialty",
+          "model": "Nemotron"
+        },
+        {
+          "type": "List-item",
+          "bbox": [
+            169.1384,
+            1181.7616,
+            653.6504000000001,
+            1226.6128
+          ],
+          "text": "\u2022 Easy access to pricing to assist in budgeting and financial planning",
+          "model": "Nemotron"
+        },
+        {
+          "type": "Section-header",
+          "bbox": [
+            162.71120000000002,
+            1250.5744,
+            251.2088,
+            1269.8256
+          ],
+          "text": "## REPORTS",
+          "model": "Nemotron"
+        },
+        {
+          "type": "List-item",
+          "bbox": [
+            167.49039999999997,
+            1277.8128,
+            581.1383999999999,
+            1297.064
+          ],
+          "text": "\u2022 Generate staff productivity and set use reports",
+          "model": "Nemotron"
+        },
+        {
+          "type": "List-item",
+          "bbox": [
+            167.49039999999997,
+            1301.7744,
+            652.0024000000001,
+            1346.6256
+          ],
+          "text": "\u2022 Track data on set usage to help identify both high and low set usage",
+          "model": "Nemotron"
+        },
+        {
+          "type": "Section-header",
+          "bbox": [
+            674.5799999999999,
+            1034.5104,
+            1089.7112,
+            1055.4
+          ],
+          "text": "**N-COMPASS SERVICES PROVIDED BY TELEFLEX:**",
+          "model": "Nemotron"
+        },
+        {
+          "type": "List-item",
+          "bbox": [
+            676.0631999999999,
+            1061.7488,
+            878.932,
+            1077.7232
+          ],
+          "text": "\u2022 Software installation",
+          "model": "Nemotron"
+        },
+        {
+          "type": "List-item",
+          "bbox": [
+            677.7112,
+            1085.7104,
+            951.2792,
+            1103.3232
+          ],
+          "text": "\u2022 On-site physical set inventory",
+          "model": "Nemotron"
+        },
+        {
+          "type": "List-item",
+          "bbox": [
+            677.7112,
+            1109.8768,
+            927.2184,
+            1128.9232
+          ],
+          "text": "\u2022 Data entry and verification",
+          "model": "Nemotron"
+        },
+        {
+          "type": "List-item",
+          "bbox": [
+            677.7112,
+            1135.4768,
+            1100.9176,
+            1177.0512
+          ],
+          "text": "\u2022 Digital images of Pilling<sup>\u00ae</sup>, Weck<sup>\u00ae</sup> and KMedic<sup>\u00ae</sup> Instruments",
+          "model": "Nemotron"
+        },
+        {
+          "type": "List-item",
+          "bbox": [
+            679.3592,
+            1185.0384,
+            1034.9976,
+            1204.2896
+          ],
+          "text": "\u2022 Standardization of instrument patterns",
+          "model": "Nemotron"
+        },
+        {
+          "type": "List-item",
+          "bbox": [
+            677.7112,
+            1210.6384,
+            912.7160000000001,
+            1228.2512
+          ],
+          "text": "\u2022 Customized count sheets",
+          "model": "Nemotron"
+        },
+        {
+          "type": "List-item",
+          "bbox": [
+            677.7112,
+            1236.2384,
+            838.7208,
+            1253.8512
+          ],
+          "text": "\u2022 On-site training",
+          "model": "Nemotron"
+        },
+        {
+          "type": "Page-footer",
+          "bbox": [
+            93.49520000000001,
+            1575.3872,
+            1239.3496,
+            1608.9744
+          ],
+          "text": "PILLINGINSTRUMENTS.COM | TOLL FREE: 866.246.6990 | CS@TELEFLEX.COM | Pilling<sup>\u00ae</sup> 15",
+          "model": "Nemotron"
+        }
+      ]
+    },
+    "model_c": {
+      "name": "ADE-DPT2",
+      "detections": []
+    },
+    "ground_truth": null
+  },
+  "17": {
+    "page": 17,
+    "displayName": "Page 17",
+    "image_path": "/api/images/bae2d30b-6fba-4221-a516-7f9c77ecb72b/page_17_original.png",
+    "image_size": [
+      1275,
+      1650
+    ],
+    "model_a": {
+      "name": "DocLayoutYOLO",
+      "detections": [
+        {
+          "type": "section_header",
+          "bbox": [
+            113.29166666666667,
+            113.9620833333332,
+            520.8041666666667,
+            147.53799048381353
+          ],
+          "text": "SCALES AND GAUGES",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "section_header",
+          "bbox": [
+            111.81416666666667,
+            198.73124999999993,
+            449.1622916666666,
+            215.51920357524023
+          ],
+          "text": "COMPARATIVE SCALES OR GAUGES",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "table",
+          "bbox": [
+            111.08766396840413,
+            225.34292538960776,
+            538.267707824707,
+            1310.6585184733071
+          ],
+          "text": "",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            112.50000000000001,
+            249.7293750000002,
+            207.4841666666667,
+            262.69990783100116
+          ],
+          "text": "diameters in",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            112.50000000000001,
+            265.3543750000002,
+            198.97187500000004,
+            278.32490783100116
+          ],
+          "text": "millimeters",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            237.89583333333334,
+            257.5418750000002,
+            304.4789583333333,
+            270.51240783100116
+          ],
+          "text": "american",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            341.0208333333333,
+            257.5418750000002,
+            391.20208333333335,
+            270.51240783100116
+          ],
+          "text": "french",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            444.14583333333337,
+            257.5418750000002,
+            499.0549999999999,
+            270.51240783100116
+          ],
+          "text": "english",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            149.97333333333333,
+            309.1043750000002,
+            171.77395833333335,
+            322.07490783100116
+          ],
+          "text": "1/3",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            378.64,
+            309.1043750000002,
+            386.74833333333333,
+            322.07490783100116
+          ],
+          "text": "1",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            149.97333333333333,
+            346.5981250000001,
+            171.78708333333333,
+            359.5686578310011
+          ],
+          "text": "1/2",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            275.52125,
+            346.5981250000001,
+            283.62958333333336,
+            359.5686578310011
+          ],
+          "text": "1",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            149.57958333333335,
+            384.091875,
+            172.19395833333334,
+            397.062407831001
+          ],
+          "text": "2/3",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            378.6400000000001,
+            384.091875,
+            386.7483333333334,
+            397.062407831001
+          ],
+          "text": "2",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            156.82750000000004,
+            421.58562499999994,
+            164.9358333333334,
+            434.5561578310009
+          ],
+          "text": "1",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            275.52125,
+            421.58562499999994,
+            283.62958333333336,
+            434.5561578310009
+          ],
+          "text": "2",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            378.6400000000001,
+            421.58562499999994,
+            386.7483333333334,
+            434.5561578310009
+          ],
+          "text": "3",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            143.81916666666672,
+            459.07937499999986,
+            177.95291666666665,
+            472.04990783100084
+          ],
+          "text": "1-1/3",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            378.6400000000001,
+            459.07937499999986,
+            386.7483333333334,
+            472.04990783100084
+          ],
+          "text": "4",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            143.80458333333337,
+            496.5731249999998,
+            177.95145833333333,
+            509.54365783100076
+          ],
+          "text": "1-1/2",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            275.5066666666667,
+            496.5731249999998,
+            283.61500000000007,
+            509.54365783100076
+          ],
+          "text": "3",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            143.16291666666675,
+            534.0668749999996,
+            178.58729166666674,
+            547.0374078310007
+          ],
+          "text": "1-2/3",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            378.62541666666675,
+            534.0668749999996,
+            386.7337500000001,
+            547.0374078310007
+          ],
+          "text": "5",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            156.81291666666675,
+            571.5606249999996,
+            164.9212500000001,
+            584.5311578310005
+          ],
+          "text": "2",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            275.5066666666668,
+            571.5606249999996,
+            283.6150000000001,
+            584.5311578310005
+          ],
+          "text": "4",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            378.6254166666668,
+            571.5606249999996,
+            386.73375000000016,
+            584.5311578310005
+          ],
+          "text": "6",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            143.70250000000016,
+            609.0543749999995,
+            178.0287500000001,
+            622.0249078310006
+          ],
+          "text": "2-1/3",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            378.6254166666668,
+            609.0543749999995,
+            386.73375000000016,
+            622.0249078310006
+          ],
+          "text": "7",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            482.00666666666683,
+            609.0543749999995,
+            490.1150000000002,
+            622.0249078310006
+          ],
+          "text": "1",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            143.70250000000016,
+            646.5481249999996,
+            178.0418750000001,
+            659.5186578310006
+          ],
+          "text": "2-1/2",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            275.5066666666668,
+            646.5481249999996,
+            283.6150000000001,
+            659.5186578310006
+          ],
+          "text": "5",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            143.06083333333342,
+            684.0418749999995,
+            178.67770833333347,
+            697.0124078310006
+          ],
+          "text": "2-2/3",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            378.62541666666675,
+            684.0418749999995,
+            386.7337500000001,
+            697.0124078310006
+          ],
+          "text": "8",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            482.00666666666683,
+            684.0418749999995,
+            490.1150000000002,
+            697.0124078310006
+          ],
+          "text": "2",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            156.81291666666684,
+            721.5356249999995,
+            164.92125000000013,
+            734.5061578310007
+          ],
+          "text": "3",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            275.5066666666668,
+            721.5356249999995,
+            283.6150000000001,
+            734.5061578310007
+          ],
+          "text": "6",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            378.6254166666668,
+            721.5356249999995,
+            386.73375000000016,
+            734.5061578310007
+          ],
+          "text": "9",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            482.00666666666683,
+            721.5356249999995,
+            490.1150000000002,
+            734.5061578310007
+          ],
+          "text": "3",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            143.49833333333345,
+            759.0293749999995,
+            178.2183333333334,
+            771.9999078310008
+          ],
+          "text": "3-1/3",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            374.5858333333334,
+            759.0293749999995,
+            390.7441666666668,
+            771.9999078310008
+          ],
+          "text": "10",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            143.49833333333345,
+            796.5231249999997,
+            178.2314583333334,
+            809.4936578310007
+          ],
+          "text": "3-1/2",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            275.4920833333334,
+            796.5231249999997,
+            283.6004166666668,
+            809.4936578310007
+          ],
+          "text": "7",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            142.85666666666677,
+            834.0168749999997,
+            178.8672916666668,
+            846.9874078310008
+          ],
+          "text": "3-2/3",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            374.8191666666668,
+            834.0168749999997,
+            390.54000000000013,
+            846.9874078310008
+          ],
+          "text": "11",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            482.0066666666668,
+            834.0168749999997,
+            490.11500000000007,
+            846.9874078310008
+          ],
+          "text": "4",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            156.81291666666675,
+            871.5106249999997,
+            164.9212500000001,
+            884.4811578310008
+          ],
+          "text": "4",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            275.5066666666668,
+            871.5106249999997,
+            283.6150000000001,
+            884.4811578310008
+          ],
+          "text": "8",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            374.71708333333345,
+            871.5106249999997,
+            390.65666666666675,
+            884.4811578310008
+          ],
+          "text": "12",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            482.0212500000002,
+            871.5106249999997,
+            490.12958333333347,
+            884.4811578310008
+          ],
+          "text": "5",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            143.44000000000014,
+            909.0043749999996,
+            178.32187500000006,
+            921.9749078310009
+          ],
+          "text": "4-1/3",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            374.6879166666668,
+            909.0043749999996,
+            390.70041666666674,
+            921.9749078310009
+          ],
+          "text": "13",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            143.44000000000014,
+            946.4981249999997,
+            178.33500000000006,
+            959.4686578310009
+          ],
+          "text": "4-1/2",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            275.5212500000001,
+            946.4981249999997,
+            283.62958333333347,
+            959.4686578310009
+          ],
+          "text": "9",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            142.79833333333343,
+            983.9918749999997,
+            178.97083333333347,
+            996.9624078310009
+          ],
+          "text": "4-2/3",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            374.6441666666668,
+            983.9918749999997,
+            390.7441666666668,
+            996.9624078310009
+          ],
+          "text": "14",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            156.82750000000016,
+            1021.4856249999997,
+            164.9358333333335,
+            1034.4561578310008
+          ],
+          "text": "5",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            271.4816666666668,
+            1021.4856249999997,
+            287.64000000000016,
+            1034.4561578310008
+          ],
+          "text": "10",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            374.6441666666668,
+            1021.4856249999997,
+            390.71500000000015,
+            1034.4561578310008
+          ],
+          "text": "15",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            482.00666666666683,
+            1021.4856249999997,
+            490.1150000000002,
+            1034.4561578310008
+          ],
+          "text": "6",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            143.46916666666684,
+            1058.979375,
+            178.25770833333343,
+            1071.949907831001
+          ],
+          "text": "5-1/3",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            374.68791666666687,
+            1058.979375,
+            390.65666666666687,
+            1071.949907831001
+          ],
+          "text": "16",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            482.00666666666683,
+            1058.979375,
+            490.1150000000002,
+            1071.949907831001
+          ],
+          "text": "7",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            143.46916666666687,
+            1096.473125,
+            178.2708333333335,
+            1109.443657831001
+          ],
+          "text": "5-1/2",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            271.70041666666685,
+            1096.473125,
+            287.42125000000016,
+            1109.443657831001
+          ],
+          "text": "11",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            142.82750000000019,
+            1133.9668749999998,
+            178.9066666666669,
+            1146.937407831001
+          ],
+          "text": "5-2/3",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            374.7170833333335,
+            1133.9668749999998,
+            390.6275000000002,
+            1146.937407831001
+          ],
+          "text": "17",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            482.00666666666683,
+            1133.9668749999998,
+            490.1150000000002,
+            1146.937407831001
+          ],
+          "text": "8",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            156.81291666666687,
+            1171.4606249999997,
+            164.9212500000002,
+            1184.4311578310012
+          ],
+          "text": "6",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            271.58375000000024,
+            1171.4606249999997,
+            287.5233333333335,
+            1184.4311578310012
+          ],
+          "text": "12",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            374.6441666666669,
+            1171.4606249999997,
+            390.7150000000002,
+            1184.4311578310012
+          ],
+          "text": "18",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            482.00666666666683,
+            1171.4606249999997,
+            490.1150000000002,
+            1184.4311578310012
+          ],
+          "text": "9",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            143.42541666666685,
+            1208.954375,
+            178.29416666666683,
+            1221.9249078310008
+          ],
+          "text": "6-1/3",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            374.7170833333335,
+            1208.954375,
+            390.6347916666669,
+            1221.9249078310008
+          ],
+          "text": "19",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            477.98166666666685,
+            1208.954375,
+            494.1400000000002,
+            1221.9249078310008
+          ],
+          "text": "10",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            143.4254166666669,
+            1246.4481250000001,
+            178.30729166666686,
+            1259.4186578310012
+          ],
+          "text": "6-1/2",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            271.54000000000025,
+            1246.4481250000001,
+            287.5525000000002,
+            1259.4186578310012
+          ],
+          "text": "13",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            142.78375000000025,
+            1283.941875,
+            178.94312500000026,
+            1296.9124078310012
+          ],
+          "text": "6-2/3",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            374.36708333333365,
+            1283.941875,
+            390.9920833333336,
+            1296.9124078310012
+          ],
+          "text": "20",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            478.200416666667,
+            1283.941875,
+            493.9212500000003,
+            1296.9124078310012
+          ],
+          "text": "11",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "table",
+          "bbox": [
+            622.2237904866536,
+            226.0040601094564,
+            1040.929349263509,
+            1271.5234120686848
+          ],
+          "text": "",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            624.4166666666667,
+            249.72229166666676,
+            719.4008333333336,
+            262.69282449766774
+          ],
+          "text": "diameters in",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            624.4166666666667,
+            265.34729166666676,
+            710.8885416666666,
+            278.31782449766774
+          ],
+          "text": "millimeters",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            740.3958333333334,
+            257.53479166666676,
+            806.9789583333334,
+            270.50532449766774
+          ],
+          "text": "american",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            843.5208333333333,
+            257.53479166666676,
+            893.7020833333333,
+            270.50532449766774
+          ],
+          "text": "french",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            946.6458333333334,
+            257.53479166666676,
+            1001.5550000000004,
+            270.50532449766774
+          ],
+          "text": "english",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            664.0291666666666,
+            309.09729166666676,
+            672.1375,
+            322.06782449766774
+          ],
+          "text": "7",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            774.0166666666665,
+            309.09729166666676,
+            790.1166666666667,
+            322.06782449766774
+          ],
+          "text": "14",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            876.9604166666667,
+            309.09729166666676,
+            893.4322916666665,
+            322.06782449766774
+          ],
+          "text": "21",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            651.1083333333333,
+            346.5910416666667,
+            685.0947916666664,
+            359.56157449766766
+          ],
+          "text": "7-1/3",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            876.8291666666667,
+            346.5910416666667,
+            893.5854166666667,
+            359.56157449766766
+          ],
+          "text": "22",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            980.61875,
+            346.5910416666667,
+            996.5583333333334,
+            359.56157449766766
+          ],
+          "text": "12",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            651.1083333333333,
+            384.0847916666666,
+            685.1079166666666,
+            397.0553244976675
+          ],
+          "text": "7-1/2",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            774.0458333333333,
+            384.0847916666666,
+            790.1166666666668,
+            397.0553244976675
+          ],
+          "text": "15",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            650.4666666666668,
+            421.5785416666665,
+            685.7320833333335,
+            434.5490744976675
+          ],
+          "text": "7-2/3",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            876.8000000000001,
+            421.5785416666665,
+            893.6145833333333,
+            434.5490744976675
+          ],
+          "text": "23",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            980.5895833333334,
+            421.5785416666665,
+            996.6020833333334,
+            434.5490744976675
+          ],
+          "text": "13",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            664.0583333333334,
+            459.0722916666664,
+            672.1666666666667,
+            472.0428244976674
+          ],
+          "text": "8",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            774.1041666666669,
+            459.0722916666664,
+            790.0729166666667,
+            472.0428244976674
+          ],
+          "text": "16",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            877.0625000000001,
+            459.0722916666664,
+            893.3666666666667,
+            472.0428244976674
+          ],
+          "text": "24",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            650.7437500000002,
+            496.5660416666663,
+            685.4972916666667,
+            509.53657449766735
+          ],
+          "text": "8-1/3",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            876.8291666666669,
+            496.5660416666663,
+            893.6218750000002,
+            509.53657449766735
+          ],
+          "text": "25",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            980.5604166666669,
+            496.5660416666663,
+            996.6604166666668,
+            509.53657449766735
+          ],
+          "text": "14",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            650.7437500000002,
+            534.0597916666662,
+            685.5104166666667,
+            547.0303244976672
+          ],
+          "text": "8-1/2",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            774.1479166666669,
+            534.0597916666662,
+            790.0583333333335,
+            547.0303244976672
+          ],
+          "text": "17",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            650.1020833333336,
+            571.5535416666661,
+            686.1462499999999,
+            584.524074497667
+          ],
+          "text": "8-2/3",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            876.9895833333336,
+            571.5535416666661,
+            893.454166666667,
+            584.524074497667
+          ],
+          "text": "26",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            980.5750000000002,
+            571.5535416666661,
+            996.6458333333336,
+            584.524074497667
+          ],
+          "text": "15",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            664.072916666667,
+            609.047291666666,
+            672.1812500000002,
+            622.0178244976672
+          ],
+          "text": "9",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            774.0750000000002,
+            609.047291666666,
+            790.1458333333336,
+            622.0178244976672
+          ],
+          "text": "18",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            876.9750000000001,
+            609.047291666666,
+            893.4979166666668,
+            622.0178244976672
+          ],
+          "text": "27",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            980.6333333333334,
+            609.047291666666,
+            996.6020833333334,
+            622.0178244976672
+          ],
+          "text": "16",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            650.7437500000002,
+            646.541041666666,
+            685.5045833333332,
+            659.5115744976672
+          ],
+          "text": "9-1/3",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            876.9458333333336,
+            646.541041666666,
+            893.5125,
+            659.5115744976672
+          ],
+          "text": "28",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            980.6625000000001,
+            646.541041666666,
+            996.5729166666669,
+            659.5115744976672
+          ],
+          "text": "17",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            650.7437500000002,
+            684.0347916666661,
+            685.5177083333333,
+            697.0053244976672
+          ],
+          "text": "9-1/2",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            774.1479166666669,
+            684.0347916666661,
+            790.0656250000002,
+            697.0053244976672
+          ],
+          "text": "19",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            650.1020833333336,
+            721.5285416666661,
+            686.1535416666665,
+            734.4990744976672
+          ],
+          "text": "9-2/3",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            876.8729166666669,
+            721.5285416666661,
+            893.5708333333336,
+            734.4990744976672
+          ],
+          "text": "29",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            660.0333333333336,
+            759.0222916666661,
+            676.1916666666668,
+            771.9928244976672
+          ],
+          "text": "10",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            773.7833333333336,
+            759.0222916666661,
+            790.4083333333336,
+            771.9928244976672
+          ],
+          "text": "20",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            876.8583333333337,
+            759.0222916666661,
+            893.5854166666671,
+            771.9928244976672
+          ],
+          "text": "30",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            980.5750000000003,
+            759.0222916666661,
+            996.6458333333337,
+            771.9928244976672
+          ],
+          "text": "18",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            646.5875000000002,
+            796.5160416666662,
+            689.6491666666666,
+            809.4865744976673
+          ],
+          "text": "10-1/3",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            877.0187500000003,
+            796.5160416666662,
+            893.4250000000003,
+            809.4865744976673
+          ],
+          "text": "31",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            980.647916666667,
+            796.5160416666662,
+            996.5656250000005,
+            809.4865744976673
+          ],
+          "text": "19",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            646.5875000000004,
+            834.0097916666662,
+            689.6622916666668,
+            846.9803244976673
+          ],
+          "text": "10-1/2",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            773.8708333333337,
+            834.0097916666662,
+            790.3427083333337,
+            846.9803244976673
+          ],
+          "text": "21",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            645.9604166666671,
+            871.5035416666661,
+            690.3127083333333,
+            884.4740744976673
+          ],
+          "text": "10-2/3",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            876.9750000000005,
+            871.5035416666661,
+            893.4979166666672,
+            884.4740744976673
+          ],
+          "text": "32",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            980.3125000000003,
+            871.5035416666661,
+            996.9375000000003,
+            884.4740744976673
+          ],
+          "text": "20",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            660.2812500000003,
+            908.9972916666663,
+            676.0020833333336,
+            921.9678244976674
+          ],
+          "text": "11",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            773.7395833333336,
+            908.9972916666663,
+            790.4958333333336,
+            921.9678244976674
+          ],
+          "text": "22",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            876.916666666667,
+            908.9972916666663,
+            893.563541666667,
+            921.9678244976674
+          ],
+          "text": "33",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            980.3854166666671,
+            908.9972916666663,
+            996.8572916666669,
+            921.9678244976674
+          ],
+          "text": "21",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            647.2583333333337,
+            946.4910416666663,
+            689.0002083333334,
+            959.4615744976674
+          ],
+          "text": "11-1/3",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            876.7708333333336,
+            946.4910416666663,
+            893.6875000000002,
+            959.4615744976674
+          ],
+          "text": "34",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            980.2395833333336,
+            946.4910416666663,
+            996.9958333333336,
+            959.4615744976674
+          ],
+          "text": "22",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            647.2583333333338,
+            983.9847916666664,
+            689.0133333333335,
+            996.9553244976673
+          ],
+          "text": "11-1/2",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            773.6958333333337,
+            983.9847916666664,
+            790.5104166666671,
+            996.9553244976673
+          ],
+          "text": "23",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            646.616666666667,
+            1021.4785416666664,
+            689.6477083333335,
+            1034.4490744976677
+          ],
+          "text": "11-2/3",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            876.916666666667,
+            1021.4785416666664,
+            893.5416666666671,
+            1034.4490744976677
+          ],
+          "text": "35",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            980.2104166666671,
+            1021.4785416666664,
+            997.0250000000003,
+            1034.4490744976677
+          ],
+          "text": "23",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            660.1645833333338,
+            1058.9722916666665,
+            676.1041666666671,
+            1071.9428244976673
+          ],
+          "text": "12",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            773.9583333333337,
+            1058.9722916666665,
+            790.2625000000003,
+            1071.9428244976673
+          ],
+          "text": "24",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            876.8729166666669,
+            1058.9722916666665,
+            893.6000000000004,
+            1071.9428244976673
+          ],
+          "text": "36",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            980.472916666667,
+            1058.9722916666665,
+            996.7770833333336,
+            1071.9428244976673
+          ],
+          "text": "24",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            647.0541666666671,
+            1096.4660416666666,
+            689.2160416666668,
+            1109.4365744976676
+          ],
+          "text": "12-1/3",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            877.0041666666671,
+            1096.4660416666666,
+            893.4833333333337,
+            1109.4365744976676
+          ],
+          "text": "37",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            980.2250000000004,
+            1096.4660416666666,
+            997.0177083333338,
+            1109.4365744976676
+          ],
+          "text": "25",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            647.0395833333337,
+            1133.9597916666664,
+            689.2145833333336,
+            1146.9303244976675
+          ],
+          "text": "12-1/2",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            773.7104166666671,
+            1133.9597916666664,
+            790.5031250000003,
+            1146.9303244976675
+          ],
+          "text": "25",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            646.3979166666671,
+            1171.4535416666663,
+            689.8402083333339,
+            1184.4240744976676
+          ],
+          "text": "12-2/3",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            876.8583333333337,
+            1171.4535416666663,
+            893.5781250000003,
+            1184.4240744976676
+          ],
+          "text": "38",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            980.3708333333336,
+            1171.4535416666663,
+            996.835416666667,
+            1184.4240744976676
+          ],
+          "text": "26",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            660.1062500000004,
+            1208.9472916666664,
+            676.1187500000003,
+            1221.9178244976674
+          ],
+          "text": "13",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            773.8562500000004,
+            1208.9472916666664,
+            790.3208333333338,
+            1221.9178244976674
+          ],
+          "text": "26",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            876.9020833333337,
+            1208.9472916666664,
+            893.5416666666671,
+            1221.9178244976674
+          ],
+          "text": "39",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            980.3416666666672,
+            1208.9472916666664,
+            996.8645833333337,
+            1221.9178244976674
+          ],
+          "text": "27",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            646.8062500000004,
+            1246.4410416666667,
+            689.4289583333335,
+            1259.4115744976675
+          ],
+          "text": "13-1/3",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            876.7416666666671,
+            1246.4410416666667,
+            893.7020833333338,
+            1259.4115744976675
+          ],
+          "text": "40",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            980.3270833333339,
+            1246.4410416666667,
+            996.8937500000004,
+            1259.4115744976675
+          ],
+          "text": "28",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "picture",
+          "bbox": [
+            1007.7658335367838,
+            1576.2812296549478,
+            1122.3281860351562,
+            1620.7592010498047
+          ],
+          "text": "",
+          "model": "DocLayoutYOLO"
+        }
+      ]
+    },
+    "model_b": {
+      "name": "Nemotron-Parse-v1.1",
+      "detections": [
+        {
+          "type": "Title",
+          "bbox": [
+            112.77680000000004,
+            111.47680000000003,
+            516.8664,
+            140.1488
+          ],
+          "text": "# SCALES AND GAUGES",
+          "model": "Nemotron"
+        },
+        {
+          "type": "Section-header",
+          "bbox": [
+            111.29360000000003,
+            212.2384,
+            446.00239999999997,
+            226.57440000000003
+          ],
+          "text": "**COMPARATIVE SCALES OR GAUGES**",
+          "model": "Nemotron"
+        },
+        {
+          "type": "Page-footer",
+          "bbox": [
+            96.7912,
+            1575.3872,
+            1231.4392,
+            1602.6256
+          ],
+          "text": "PILLINGINSTRUMENTS.COM TOLL FREE: 866.246.6990 CS@TELEFLEX.COM Pilling<sup>\u00ae</sup> 17",
+          "model": "Nemotron"
+        }
+      ]
+    },
+    "model_c": {
+      "name": "ADE-DPT2",
+      "detections": []
+    },
+    "ground_truth": null
+  },
+  "19": {
+    "page": 19,
+    "displayName": "Page 19",
+    "image_path": "/api/images/bae2d30b-6fba-4221-a516-7f9c77ecb72b/page_19_original.png",
+    "image_size": [
+      1275,
+      1650
+    ],
+    "model_a": {
+      "name": "DocLayoutYOLO",
+      "detections": [
+        {
+          "type": "section_header",
+          "bbox": [
+            145.15854166666668,
+            222.81270833333312,
+            547.3235416666665,
+            240.94369819459257
+          ],
+          "text": "FROM INNER SURFACE OF SIDE BLADES",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "picture",
+          "bbox": [
+            120.97012201944987,
+            256.71971638997394,
+            1042.3777262369792,
+            1532.6054890950522
+          ],
+          "text": "",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "picture",
+          "bbox": [
+            1007.6697031656901,
+            1576.3933817545574,
+            1121.9993591308594,
+            1620.7951863606772
+          ],
+          "text": "",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            543.603,
+            1521.503291666667,
+            591.4515,
+            1535.511467124148
+          ],
+          "text": "RINGS",
+          "model": "DocLayoutYOLO"
+        }
+      ]
+    },
+    "model_b": {
+      "name": "Nemotron-Parse-v1.1",
+      "detections": [
+        {
+          "type": "Page-header",
+          "bbox": [
+            1239.3496,
+            90.5872,
+            1253.852,
+            325.69759999999997
+          ],
+          "text": "GENERAL INFORMATION",
+          "model": "Nemotron"
+        },
+        {
+          "type": "Page-footer",
+          "bbox": [
+            96.7912,
+            1575.3872,
+            1231.4392,
+            1604.264
+          ],
+          "text": "PILLINGINSTRUMENTS.COM TOLL FREE: 866.246.6990 CS@TELEFLEX.COM 19",
+          "model": "Nemotron"
+        },
+        {
+          "type": "Picture",
+          "bbox": [
+            124.14800000000002,
+            263.4384,
+            587.5656,
+            717.8896
+          ],
+          "text": "SPREAD\nARM LENGTH\nRACK LENGTH",
+          "model": "Nemotron"
+        },
+        {
+          "type": "Picture",
+          "bbox": [
+            721.2184,
+            279.4128,
+            1038.2936,
+            722.6
+          ],
+          "text": "BLADE\nSHAFT\nLENGTH\nHORN\nHANDLE",
+          "model": "Nemotron"
+        },
+        {
+          "type": "Picture",
+          "bbox": [
+            122.5,
+            781.7872,
+            669.636,
+            954.6384
+          ],
+          "text": "WIDTH (mm)\nDEPTH\nWIDTH",
+          "model": "Nemotron"
+        },
+        {
+          "type": "Picture",
+          "bbox": [
+            796.8616000000001,
+            845.8896,
+            994.7864,
+            895.4512
+          ],
+          "text": "DEPTH",
+          "model": "Nemotron"
+        },
+        {
+          "type": "Picture",
+          "bbox": [
+            141.78159999999997,
+            1148.1744,
+            264.06319999999994,
+            1388.2
+          ],
+          "text": "LENGTH (mm)",
+          "model": "Nemotron"
+        },
+        {
+          "type": "Picture",
+          "bbox": [
+            397.716,
+            1036.1488,
+            722.8663999999999,
+            1516.2
+          ],
+          "text": "SCREW\nBLADE\nLENGTH\nSHANK\nRINGS",
+          "model": "Nemotron"
+        },
+        {
+          "type": "Picture",
+          "bbox": [
+            887.0072,
+            1143.464,
+            949.796,
+            1449.0256
+          ],
+          "text": "",
+          "model": "Nemotron"
+        },
+        {
+          "type": "Caption",
+          "bbox": [
+            145.07759999999996,
+            221.86399999999998,
+            545.7063999999999,
+            236.2
+          ],
+          "text": "FROM INNER SURFACE OF SIDE BLADES",
+          "model": "Nemotron"
+        },
+        {
+          "type": "Caption",
+          "bbox": [
+            497.41999999999996,
+            1008.9104,
+            639.148,
+            1023.4512
+          ],
+          "text": "RING HANDLE",
+          "model": "Nemotron"
+        },
+        {
+          "type": "Caption",
+          "bbox": [
+            125.79599999999999,
+            1125.8512,
+            281.8616,
+            1141.8256
+          ],
+          "text": "BLADE LENGTH",
+          "model": "Nemotron"
+        },
+        {
+          "type": "Caption",
+          "bbox": [
+            824.2184,
+            1095.336,
+            1018.8472000000002,
+            1109.8768
+          ],
+          "text": "BLADE CURVATURE",
+          "model": "Nemotron"
+        }
+      ]
+    },
+    "model_c": {
+      "name": "ADE-DPT2",
+      "detections": []
+    },
+    "ground_truth": null
+  },
+  "25": {
+    "page": 25,
+    "displayName": "Page 25",
+    "image_path": "/api/images/bae2d30b-6fba-4221-a516-7f9c77ecb72b/page_25_original.png",
+    "image_size": [
+      1275,
+      1650
+    ],
+    "model_a": {
+      "name": "DocLayoutYOLO",
+      "detections": [
+        {
+          "type": "section_header",
+          "bbox": [
+            97.49999999999999,
+            122.78270833333332,
+            676.1450000000001,
+            167.55058453397353
+          ],
+          "text": "FORCEPS AND CLAMPS",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            97.49999999999999,
+            175.99895833333338,
+            336.14333333333343,
+            205.64589051847855
+          ],
+          "text": "Sponge Forceps",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "section_header",
+          "bbox": [
+            97.49999999999999,
+            295.1591666666668,
+            451.2737499999996,
+            315.6777765919602
+          ],
+          "text": "BALLENGER SPONGE FORCEPS",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "picture",
+          "bbox": [
+            131.5865993499756,
+            336.1961046854655,
+            513.0999565124512,
+            551.0237375895183
+          ],
+          "text": "",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "section_header",
+          "bbox": [
+            97.49999999999999,
+            685.2129166666666,
+            431.5997916666663,
+            705.7315265919602
+          ],
+          "text": "FOERSTER SPONGE FORCEPS",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "picture",
+          "bbox": [
+            100.11229515075684,
+            727.4652481079102,
+            531.3290596008301,
+            902.6690800984701
+          ],
+          "text": "",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "section_header",
+          "bbox": [
+            97.49999999999999,
+            1009.0195833333333,
+            431.5997916666663,
+            1029.5381932586267
+          ],
+          "text": "FOERSTER SPONGE FORCEPS",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "picture",
+          "bbox": [
+            92.54920482635498,
+            1046.2589263916016,
+            548.5986709594727,
+            1250.3869374593098
+          ],
+          "text": "",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "table",
+          "bbox": [
+            560.4164759318035,
+            330.78298568725586,
+            1089.2406463623047,
+            432.46301015218097
+          ],
+          "text": "",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            565.5,
+            347.64437500000014,
+            609.3564583333334,
+            360.6149078310011
+          ],
+          "text": "item #",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            678.0,
+            347.64437500000014,
+            762.7583333333333,
+            360.6149078310011
+          ],
+          "text": "description",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            568.6875000000001,
+            371.7622916666668,
+            623.385833333333,
+            386.58575775923936
+          ],
+          "text": "121410",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            681.1875,
+            371.7622916666668,
+            978.3841666666663,
+            386.58575775923936
+          ],
+          "text": "Straight, smooth jaws, 7-1/4\" (18.5 cm)",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            568.6875000000001,
+            393.1622916666669,
+            623.1458333333333,
+            407.98575775923945
+          ],
+          "text": "121412",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            681.1875,
+            393.1622916666669,
+            985.4541666666662,
+            407.98575775923945
+          ],
+          "text": "Straight, serrated jaws, 7-1/4\" (18.5 cm)",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            568.6875000000001,
+            414.5622916666669,
+            624.4874999999998,
+            429.3857577592396
+          ],
+          "text": "121422",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            681.1875,
+            414.5622916666669,
+            936.3508333333334,
+            429.3857577592396
+          ],
+          "text": "Curved, serrated jaws, 7\" (18 cm)",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "section_header",
+          "bbox": [
+            562.5,
+            730.0228125,
+            827.4908333333339,
+            749.3649576157158
+          ],
+          "text": "Pilling \u00ae  Pattern, satin finish.",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "table",
+          "bbox": [
+            560.7987721761067,
+            761.4928563435873,
+            1087.9811604817708,
+            878.781000773112
+          ],
+          "text": "",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            565.5,
+            773.51875,
+            609.3564583333334,
+            786.4892828310011
+          ],
+          "text": "item #",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            678.0,
+            773.51875,
+            762.7583333333333,
+            786.4892828310011
+          ],
+          "text": "description",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            568.6875000000001,
+            797.6366666666667,
+            623.2808333333331,
+            812.4601327592393
+          ],
+          "text": "121415",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            681.1875,
+            797.6366666666667,
+            967.0958333333331,
+            812.4601327592393
+          ],
+          "text": "Straight, smooth jaws, 9-3/4\" (25 cm)",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            568.6875000000001,
+            819.0366666666666,
+            623.0824999999998,
+            833.8601327592394
+          ],
+          "text": "121417",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            681.1875,
+            819.0366666666666,
+            974.1674999999999,
+            833.8601327592394
+          ],
+          "text": "Straight, serrated jaws, 9-3/4\" (25 cm)",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            568.6875000000001,
+            840.4366666666667,
+            624.5341666666665,
+            855.2601327592394
+          ],
+          "text": "121425",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            681.1875,
+            840.4366666666667,
+            960.0291666666662,
+            855.2601327592394
+          ],
+          "text": "Curved, smooth jaws, 9-1/2\" (24 cm)",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            568.6875000000001,
+            861.8366666666667,
+            624.2225,
+            876.6601327592393
+          ],
+          "text": "121427",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            681.1875,
+            861.8366666666667,
+            967.1008333333333,
+            876.6601327592393
+          ],
+          "text": "Curved, serrated jaws, 9-1/2\" (24 cm)",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "section_header",
+          "bbox": [
+            562.5,
+            1054.6422916666666,
+            831.9827083333337,
+            1073.1716242823825
+          ],
+          "text": "Weck \u00ae  Pattern, bright finish.",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "table",
+          "bbox": [
+            559.9610646565756,
+            1086.568832397461,
+            1087.5968933105469,
+            1139.120864868164
+          ],
+          "text": "",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            565.5,
+            1097.2962499999999,
+            609.3564583333334,
+            1110.2667828310011
+          ],
+          "text": "item #",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            678.0,
+            1097.2962499999999,
+            762.7583333333333,
+            1110.2667828310011
+          ],
+          "text": "description",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            568.6875000000001,
+            1121.414166666667,
+            625.8141666666666,
+            1136.2376327592392
+          ],
+          "text": "454100",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "text",
+          "bbox": [
+            681.1875,
+            1121.414166666667,
+            1018.4291666666664,
+            1136.2376327592392
+          ],
+          "text": "Straight, cross serrated jaws, 9-1/2\" (24 cm)",
+          "model": "DocLayoutYOLO"
+        },
+        {
+          "type": "picture",
+          "bbox": [
+            1005.5737177530925,
+            1575.6741841634114,
+            1120.4265594482422,
+            1619.2704518636067
+          ],
+          "text": "",
+          "model": "DocLayoutYOLO"
+        }
+      ]
+    },
+    "model_b": {
+      "name": "Nemotron-Parse-v1.1",
+      "detections": [
+        {
+          "type": "Title",
+          "bbox": [
+            98.43919999999997,
+            120.89760000000001,
+            672.9319999999999,
+            159.39999999999998
+          ],
+          "text": "# FORCEPS AND CLAMPS",
+          "model": "Nemotron"
+        },
+        {
+          "type": "Section-header",
+          "bbox": [
+            96.7912,
+            173.736,
+            333.27920000000006,
+            205.88959999999997
+          ],
+          "text": "Sponge Forceps",
+          "model": "Nemotron"
+        },
+        {
+          "type": "Page-footer",
+          "bbox": [
+            95.14319999999998,
+            1575.3872,
+            1229.7912000000001,
+            1602.6256
+          ],
+          "text": "PILLINGINSTRUMENTS.COM TOLL FREE: 866.246.6990 CS@TELEFLEX.COM Pilling<sup>\u00ae</sup> 25",
+          "model": "Nemotron"
+        },
+        {
+          "type": "Table",
+          "bbox": [
+            560.2088,
+            336.9616,
+            1086.58,
+            431.37440000000004
+          ],
+          "text": "\\begin{tabular}{cc}\nITEM # & DESCRIPTION\\\\\n121410 & Straight, smooth jaws, 7-1/4\" (18.5 cm)\\\\\n121412 & Straight, serrated jaws, 7-1/4\" (18.5 cm)\\\\\n121422 & Curved, serrated jaws, 7\" (18 cm)\\\\\n\\end{tab",
+          "model": "Nemotron"
+        },
+        {
+          "type": "Table",
+          "bbox": [
+            561.8568,
+            762.536,
+            1084.932,
+            877.8384000000001
+          ],
+          "text": "\\begin{tabular}{cc}\nITEM # & DESCRIPTION\\\\\n121415 & Straight, smooth jaws, 9-3/4\" (25 cm)\\\\\n121417 & Straight, serrated jaws, 9-3/4\" (25 cm)\\\\\n121425 & Curved, smooth jaws, 9-1/2\" (24 cm)\\\\\n121427 & C",
+          "model": "Nemotron"
+        },
+        {
+          "type": "Table",
+          "bbox": [
+            563.5048,
+            1085.7104,
+            1088.0632,
+            1138.5488
+          ],
+          "text": "\\begin{tabular}{cc}\nITEM # & DESCRIPTION\\\\\n454100 & Straight, cross serrated jaws, 9-1/2\" (24 cm)\\\\\n\\end{tabular}",
+          "model": "Nemotron"
+        },
+        {
+          "type": "Picture",
+          "bbox": [
+            141.78159999999997,
+            340.23839999999996,
+            508.7912,
+            549.7488
+          ],
+          "text": "",
+          "model": "Nemotron"
+        },
+        {
+          "type": "Picture",
+          "bbox": [
+            107.99759999999998,
+            733.864,
+            528.0728,
+            879.4767999999999
+          ],
+          "text": "",
+          "model": "Nemotron"
+        },
+        {
+          "type": "Picture",
+          "bbox": [
+            119.20400000000001,
+            1047.4128,
+            526.4248,
+            1202.6512
+          ],
+          "text": "454100",
+          "model": "Nemotron"
+        },
+        {
+          "type": "Caption",
+          "bbox": [
+            96.7912,
+            293.7488,
+            449.1336,
+            311.3616
+          ],
+          "text": "**BALLENGER SPONGE FORCEPS**",
+          "model": "Nemotron"
+        },
+        {
+          "type": "Caption",
+          "bbox": [
+            96.7912,
+            682.664,
+            429.852,
+            700.2768
+          ],
+          "text": "**FOERSTER SPONGE FORCEPS**",
+          "model": "Nemotron"
+        },
+        {
+          "type": "Caption",
+          "bbox": [
+            561.8568,
+            728.9488,
+            824.2184,
+            749.8384
+          ],
+          "text": "Pilling<sup>\u00ae</sup> Pattern, satin finish.",
+          "model": "Nemotron"
+        }
+      ]
+    },
+    "model_c": {
+      "name": "ADE-DPT2",
+      "detections": []
+    },
+    "ground_truth": null
+  }
+}

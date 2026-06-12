@@ -20,3 +20,11 @@ pandas>=2.0.0
 einops>=0.7.0
 albumentations==2.0.8
 python-dotenv
+# Benchmark dependencies
+datasets>=2.18.0,<3.0.0
+pycocotools>=2.0.7
+seaborn>=0.13.0
+img2pdf>=0.5.0
+tqdm>=4.66.0
+torch>=2.1.0
+numpy>=1.24.0
