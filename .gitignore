@@ -6,3 +6,12 @@ coverage/
 *.log
 .env*
 !.env.example
+venv/
+venv_old/
+venv_new/
+.vscode/
+.agents/
+backend/uploads/
+benchmark_output/
+cache/
+
