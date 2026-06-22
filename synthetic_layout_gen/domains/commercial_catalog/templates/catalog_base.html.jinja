@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>{{ catalog_title }}</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+    
+    @page {
+      size: 612pt 792pt;
+      margin: 0;
+    }
+    
+    :root {
+      /* Nordic Light Theme */
+      {% if theme_id == 'nordic_light' %}
+      --bg-color: #F8FAFC;
+      --card-bg: #FFFFFF;
+      --text-color: #0F172A;
+      --muted-text: #64748B;
+      --accent-color: #3B82F6;
+      --accent-gradient: linear-gradient(135deg, #3B82F6, #06B6D4);
+      --border-color: #E2E8F0;
+      --price-color: #0F172A;
+      --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
+      
+      /* Cyberpunk Dark Theme */
+      {% elif theme_id == 'cyberpunk_dark' %}
+      --bg-color: #0B0F19;
+      --card-bg: #151D30;
+      --text-color: #F1F5F9;
+      --muted-text: #94A3B8;
+      --accent-color: #F43F5E;
+      --accent-gradient: linear-gradient(135deg, #EC4899, #8B5CF6);
+      --border-color: #1E293B;
+      --price-color: #10B981;
+      --card-shadow: 0 4px 20px rgba(236, 72, 153, 0.15);
+      
+      /* Emerald Luxury Theme */
+      {% else %}
+      --bg-color: #FAF9F6;
+      --card-bg: #FFFFFF;
+      --text-color: #1C2E24;
+      --muted-text: #5C6F65;
+      --accent-color: #047857;
+      --accent-gradient: linear-gradient(135deg, #059669, #10B981);
+      --border-color: #E6DFD3;
+      --price-color: #064E3B;
+      --card-shadow: 0 10px 15px -3px rgba(4, 120, 87, 0.05);
+      {% endif %}
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      width: 1275px;
+      height: 1650px;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      font-family: 'Outfit', sans-serif;
+      position: relative;
+      overflow: hidden;
+      padding: {{ padding_top_px | default(120) }}px {{ padding_right_px | default(80) }}px {{ padding_bottom_px | default(100) }}px {{ padding_left_px | default(80) }}px;
+    }
+
+    /* Header Styling */
+    .catalog-header {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: {{ padding_top_px | default(120) }}px;
+      padding: {{ margin_top_px | default(30) }}px {{ padding_left_px | default(80) }}px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border-color);
+      background-color: var(--bg-color);
+      z-index: 10;
+    }
+
+    .brand-logo {
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      background: var(--accent-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .catalog-meta {
+      text-align: right;
+    }
+
+    .catalog-subtitle {
+      font-size: 14px;
+      color: var(--muted-text);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    /* Footer Styling */
+    .catalog-footer {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: {{ padding_bottom_px | default(100) }}px;
+      padding: {{ margin_bottom_px | default(20) }}px {{ padding_left_px | default(80) }}px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid var(--border-color);
+      background-color: var(--bg-color);
+      z-index: 10;
+      font-size: 13px;
+      color: var(--muted-text);
+    }
+
+    .footer-terms {
+      letter-spacing: 0.5px;
+    }
+
+    .page-number {
+      font-weight: 600;
+    }
+
+    /* Grid Layout */
+    .catalog-title-block {
+      margin-bottom: 24px;
+    }
+
+    .main-title {
+      font-size: 38px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      margin-bottom: 6px;
+    }
+
+    .main-subtitle {
+      font-size: 16px;
+      color: var(--muted-text);
+      font-weight: 300;
+    }
+
+    .catalog-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 36px;
+      width: 100%;
+    }
+
+    /* Product Card Styling */
+    .product-card {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      height: auto;
+      box-shadow: var(--card-shadow);
+      transition: transform 0.2s ease;
+    }
+
+    .product-image-container {
+      width: 100%;
+      height: 190px;
+      border-radius: 8px;
+      overflow: hidden;
+      margin-bottom: 16px;
+      border: 1px solid var(--border-color);
+    }
+
+    .product-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .product-name {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      line-height: 1.3;
+    }
+
+    .product-desc {
+      font-size: 13px;
+      color: var(--muted-text);
+      margin-bottom: 12px;
+      line-height: 1.4;
+      flex-grow: 1; /* Pushes specs and price to the bottom */
+    }
+
+    /* Specs Table */
+    .product-specs {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 12px;
+      font-size: 11px;
+    }
+
+    .product-specs td {
+      padding: 4px 0;
+      border-bottom: 1px dashed var(--border-color);
+    }
+
+    .product-specs td:first-child {
+      color: var(--muted-text);
+      font-weight: 500;
+      width: 45%;
+    }
+
+    .product-specs td:last-child {
+      text-align: right;
+      font-weight: 600;
+    }
+
+    /* Price and Action */
+    .card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 8px;
+      border-top: 1px solid var(--border-color);
+    }
+
+    .product-price {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--price-color);
+    }
+
+    .product-tag {
+      font-size: 11px;
+      text-transform: uppercase;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      color: var(--accent-color);
+    }
+
+    /* CSS rules for printing to match screen exactly */
+    @media print {
+      body {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Page Header -->
+  <header class="catalog-header" data-gt-type="page_header">
+    <div class="brand-logo">{{ brand_name }}</div>
+    <div class="catalog-meta">
+      <div class="catalog-subtitle">{{ catalog_version }}</div>
+    </div>
+  </header>
+
+  <!-- Page Title / Section Header -->
+  <div class="catalog-title-block">
+    <h1 class="main-title" data-gt-type="title">{{ catalog_title }}</h1>
+    <p class="main-subtitle" data-gt-type="text">{{ catalog_subtitle }}</p>
+  </div>
+
+  <!-- Product Grid -->
+  <div class="catalog-grid">
+    {% for product in products %}
+    <div class="product-card">
+      <div class="product-image-container">
+        <!-- SVG Placeholder Image -->
+        <img class="product-image" data-gt-type="picture" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='200' viewBox='0 0 300 200'><defs><linearGradient id='g{{ loop.index }}' x1='0%25' y1='0%25' x2='100%25' y2='100%25'><stop offset='0%25' style='stop-color:%23{{ product.start_color }};stop-opacity:1' /><stop offset='100%25' style='stop-color:%23{{ product.end_color }};stop-opacity:1' /></linearGradient></defs><rect width='300' height='200' fill='url(%23g{{ loop.index }})'/><text x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='%23ffffff' font-family='sans-serif' font-size='20' font-weight='bold'>{{ product.product_label }}</text></svg>" alt="{{ product.name }}">
+      </div>
+      
+      <div class="product-name" data-gt-type="title">{{ product.name }}</div>
+      
+      <div class="product-desc" data-gt-type="text">{{ product.description }}</div>
+      
+      {% if product.specs %}
+      <table class="product-specs" data-gt-type="table">
+        {% for spec in product.specs %}
+        <tr>
+          <td>{{ spec.key }}</td>
+          <td>{{ spec.value }}</td>
+        </tr>
+        {% endfor %}
+      </table>
+      {% endif %}
+      
+      <div class="card-footer">
+        <div class="product-price" data-gt-type="text" data-gt-attrs='{"role":"price_tag"}'>{{ product.price }}</div>
+        <div class="product-tag">{{ product.category }}</div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- Page Footer -->
+  <footer class="catalog-footer" data-gt-type="page_footer">
+    <div class="footer-terms">&copy; 2026 {{ brand_name }}. All rights reserved. Trade pricing available.</div>
+    <div class="page-number">Page {{ page_num }}</div>
+  </footer>
+
+</body>
+</html>

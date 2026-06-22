@@ -1,0 +1,119 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "GroundTruthDatasetSchema",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "document_id",
+    "domain",
+    "source_engine",
+    "bbox_convention",
+    "generation_seed",
+    "pages"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "1.0.0"
+    },
+    "document_id": {
+      "type": "string"
+    },
+    "domain": {
+      "type": "string"
+    },
+    "source_engine": {
+      "type": "string"
+    },
+    "bbox_convention": {
+      "type": "object",
+      "required": ["origin", "units", "dpi_for_px_assets", "box_type"],
+      "properties": {
+        "origin": { "type": "string", "const": "top-left" },
+        "units": { "type": "string", "const": "pt" },
+        "dpi_for_px_assets": { "type": "integer" },
+        "box_type": { "type": "string", "const": "content" }
+      }
+    },
+    "generation_seed": {
+      "type": "integer"
+    },
+    "pages": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["page_number", "dimensions_pt", "dimensions_px", "image_path", "layout_elements"],
+        "properties": {
+          "page_number": { "type": "integer", "minimum": 1 },
+          "dimensions_pt": {
+            "type": "array",
+            "minItems": 2,
+            "maxItems": 2,
+            "items": { "type": "number" }
+          },
+          "dimensions_px": {
+            "type": "array",
+            "minItems": 2,
+            "maxItems": 2,
+            "items": { "type": "integer" }
+          },
+          "image_path": { "type": "string" },
+          "layout_elements": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["element_id", "type", "bbox", "text", "reading_order", "attributes"],
+              "properties": {
+                "element_id": { "type": "string" },
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "title", "text", "table", "picture", "list_item",
+                    "caption", "section_header", "page_footer", "page_header",
+                    "formula", "footnote"
+                  ]
+                },
+                "bbox": {
+                  "type": "array",
+                  "minItems": 4,
+                  "maxItems": 4,
+                  "items": { "type": "number" }
+                },
+                "text": { "type": ["string", "null"] },
+                "reading_order": { "type": "integer", "minimum": 0 },
+                "attributes": {
+                  "type": "object",
+                  "required": ["is_continued_from", "is_continued_on_next_page"],
+                  "properties": {
+                    "is_continued_from": { "type": ["string", "null"] },
+                    "is_continued_on_next_page": { "type": "boolean" },
+                    "n_rows": { "type": "integer" },
+                    "n_cols": { "type": "integer" },
+                    "cells": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": ["row", "col", "bbox", "text"],
+                        "properties": {
+                          "row": { "type": "integer" },
+                          "col": { "type": "integer" },
+                          "bbox": {
+                            "type": "array",
+                            "minItems": 4,
+                            "maxItems": 4,
+                            "items": { "type": "number" }
+                          },
+                          "text": { "type": "string" }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
