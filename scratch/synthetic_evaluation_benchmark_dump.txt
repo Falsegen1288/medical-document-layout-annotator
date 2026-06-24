@@ -1,0 +1,507 @@
+=== Cell 0 (markdown) ===
+# Synthetic Layout Ground-Truth Evaluation Benchmark
+
+This notebook evaluates **DocLayoutYOLO** (via Docling) and **NVIDIA Nemotron-Parse-v1.1** against
+**pixel-perfect, rendering-time ground-truth annotations** from the `synthetic_layout_gen` pipeline.
+
+**Dataset:** 2 samples × 5 domains (subset of Financial Invoice, Scientific Paper, Legal Opinion, Medical Report, Commercial Catalog)
+
+**Layout Skeleton Integration:** Generators now use empirical layout statistics harvested from DocLayNet
+instead of hardcoded margins, producing more realistic document geometries.
+
+## Metrics
+- **mAP@50** — Mean Average Precision at IoU 0.50
+- **mAP@50:95** — Mean AP averaged over IoU thresholds [0.50, 0.55, …, 0.95]
+- **Precision / Recall / F1** — at IoU 0.50
+- **mean_IoU** — Average IoU of matched predictions
+
+==================================================
+
+=== Cell 1 (code) ===
+import os
+import sys
+import glob
+import json
+import time
+import warnings
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+from PIL import Image, ImageDraw
+import torch
+
+sys.path.insert(0, os.path.abspath("."))
+
+from synthetic_layout_gen.core.canonical_taxonomy import CANONICAL_LABELS
+from backend.benchmark import (
+    DOCLAYNET_TO_CANONICAL,
+    compute_map
+)
+
+warnings.filterwarnings('ignore')
+DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
+print(f"Device: {DEVICE}")
+
+==================================================
+
+=== Cell 2 (code) ===
+def load_synthetic_dataset(output_root="output/"):
+    domains = ["financial_invoice", "scientific_paper", "legal_opinion", "medical_report", "commercial_catalog"]
+    samples = []
+    
+    for domain in domains:
+        json_pattern = os.path.join(output_root, domain, "json", "*_0000[0-1].json")
+        json_files = sorted(glob.glob(json_pattern))
+        
+        for json_path in json_files:
+            with open(json_path, "r", encoding="utf-8") as f:
+                data = json.load(f)
+            
+            document_id = data["document_id"]
+            for page in data["pages"]:
+                image_rel_path = page["image_path"]
+                image_abs_path = os.path.abspath(image_rel_path)
+                pdf_path = os.path.join(output_root, domain, "pdfs", f"{document_id}.pdf")
+                
+                gt_boxes = []
+                for elem in page["layout_elements"]:
+                    gt_boxes.append({
+                        "bbox": elem["bbox"],
+                        "label": elem["type"]
+                    })
+                
+                samples.append({
+                    "document_id": document_id,
+                    "domain": domain,
+                    "page_number": page["page_number"],
+                    "image_path": image_abs_path,
+                    "pdf_path": pdf_path,
+                    "gt": gt_boxes,
+                    "dimensions_pt": page["dimensions_pt"]
+                })
+    return samples
+
+samples = load_synthetic_dataset()
+print(f"Loaded {len(samples)} synthetic pages for evaluation.")
+
+# Dataset summary
+from collections import Counter
+domain_counts = Counter(s['domain'] for s in samples)
+print("\nPages per domain:")
+for d, c in sorted(domain_counts.items()):
+    print(f"  {d}: {c} pages")
+print(f"\nTotal GT elements: {sum(len(s['gt']) for s in samples)}")
+
+==================================================
+
+=== Cell 3 (code) ===
+from docling.document_converter import DocumentConverter, PdfFormatOption
+from docling.datamodel.base_models import InputFormat
+from docling.datamodel.pipeline_options import PdfPipelineOptions
+from transformers import AutoModel, AutoProcessor, AutoTokenizer, GenerationConfig
+
+print("Loading DocLayoutYOLO...")
+pipeline_options = PdfPipelineOptions()
+pipeline_options.do_table_structure = True
+converter = DocumentConverter(
+    format_options={
+        InputFormat.PDF: PdfFormatOption(pipeline_options=pipeline_options)
+    }
+)
+print("DocLayoutYOLO loaded.")
+
+print("Loading NVIDIA Nemotron-Parse-v1.1...")
+MODEL_PATH = 'nvidia/NVIDIA-Nemotron-Parse-v1.1'
+nemo_model = AutoModel.from_pretrained(
+    MODEL_PATH,
+    trust_remote_code = True,
+    torch_dtype       = torch.float16,
+    low_cpu_mem_usage = True,
+).to(DEVICE).eval()
+
+nemo_tokenizer  = AutoTokenizer.from_pretrained(MODEL_PATH, use_fast=True)
+nemo_processor  = AutoProcessor.from_pretrained(MODEL_PATH, trust_remote_code=True, use_fast=True)
+nemo_processor.image_processor.final_size = (1024, 832)
+nemo_processor.image_processor._create_transforms()
+nemo_gen_config = GenerationConfig.from_pretrained(MODEL_PATH, trust_remote_code=True)
+nemo_gen_config.max_new_tokens = 1024
+print("Nemotron-Parse loaded.")
+
+==================================================
+
+=== Cell 4 (code) ===
+import re
+
+PROC_W = 832
+PROC_H = 1024
+BLOCK_PATTERN = re.compile(
+    r'<x_([0-9.]+)><y_([0-9.]+)>'   # top-left
+    r'(.*?)'                          # text content
+    r'<x_([0-9.]+)><y_([0-9.]+)>'   # bottom-right
+    r'<class_([^>]+)>',              # class label
+    re.DOTALL
+)
+
+def run_docling_on_pdf(pdf_path, page_number):
+    try:
+        result = converter.convert(pdf_path)
+        doc_obj = result.document
+        page_info = doc_obj.pages.get(page_number)
+        pw_pt, ph_pt = (page_info.size.width, page_info.size.height) if page_info and page_info.size else (612.0, 792.0)
+        
+        preds = []
+        for item, _ in doc_obj.iterate_items():
+            if not hasattr(item, 'prov') or not item.prov:
+                continue
+            prov = item.prov[0]
+            if prov.page_no != page_number:
+                continue
+            bbox = prov.bbox
+            label_raw = type(item).__name__.lower().replace('item', '').replace('docling', '')
+            canonical = DOCLAYNET_TO_CANONICAL.get(label_raw, 'text')
+            
+            x0, y0 = bbox.l, ph_pt - bbox.t
+            x1, y1 = bbox.r, ph_pt - bbox.b
+            x0, x1 = min(x0, x1), max(x0, x1)
+            y0, y1 = min(y0, y1), max(y0, y1)
+            
+            preds.append({
+                'bbox': [x0, y0, x1, y1],
+                'label': canonical,
+                'score': 0.9
+            })
+        return preds
+    except Exception as e:
+        print(f"    Docling error: {e}")
+        return []
+
+def run_nemotron_on_page(image_path, dpi=150):
+    pil_image = Image.open(image_path).convert("RGB")
+    orig_w, orig_h = pil_image.size
+    
+    padded = Image.new('RGB', (PROC_W, PROC_H), (255, 255, 255))
+    if orig_w > PROC_W or orig_h > PROC_H:
+        scale = min(PROC_W / orig_w, PROC_H / orig_h)
+        new_w, new_h = int(orig_w * scale), int(orig_h * scale)
+        resized = pil_image.resize((new_w, new_h), Image.LANCZOS)
+        pad_x = (PROC_W - new_w) // 2
+        pad_y = (PROC_H - new_h) // 2
+        padded.paste(resized, (pad_x, pad_y))
+        effective_scale = scale
+    else:
+        pad_x = (PROC_W - orig_w) // 2
+        pad_y = (PROC_H - orig_h) // 2
+        padded.paste(pil_image, (pad_x, pad_y))
+        effective_scale = 1.0
+        
+    task_prompt = '</s><s><predict_bbox><predict_classes>'
+    inputs = nemo_processor(images=padded, text=task_prompt, return_tensors='pt', add_special_tokens=False).to(DEVICE)
+    
+    with torch.no_grad():
+        outputs = nemo_model.generate(**inputs, generation_config=nemo_gen_config, max_new_tokens=1024)
+        
+    decoded = nemo_tokenizer.decode(outputs[0], skip_special_tokens=False)
+    
+    detections = []
+    for m in BLOCK_PATTERN.finditer(decoded):
+        x0_n, y0_n = float(m.group(1)), float(m.group(2))
+        x1_n, y1_n = float(m.group(4)), float(m.group(5))
+        cls = m.group(6).strip()
+        
+        x0_px = x0_n * PROC_W - pad_x
+        y0_px = y0_n * PROC_H - pad_y
+        x1_px = x1_n * PROC_W - pad_x
+        y1_px = y1_n * PROC_H - pad_y
+        
+        if effective_scale != 1.0:
+            x0_px /= effective_scale; y0_px /= effective_scale
+            x1_px /= effective_scale; y1_px /= effective_scale
+            
+        x0_px = max(0, min(orig_w, x0_px))
+        y0_px = max(0, min(orig_h, y0_px))
+        x1_px = max(0, min(orig_w, x1_px))
+        y1_px = max(0, min(orig_h, y1_px))
+        
+        canonical = DOCLAYNET_TO_CANONICAL.get(cls, DOCLAYNET_TO_CANONICAL.get(cls.lower(), 'text'))
+        
+        x0_pt = x0_px * 72.0 / dpi
+        y0_pt = y0_px * 72.0 / dpi
+        x1_pt = x1_px * 72.0 / dpi
+        y1_pt = y1_px * 72.0 / dpi
+        
+        if (x1_pt - x0_pt) > 1 and (y1_pt - y0_pt) > 1:
+            detections.append({
+                'bbox': [x0_pt, y0_pt, x1_pt, y1_pt],
+                'label': canonical,
+                'score': 0.85
+            })
+    return detections
+
+==================================================
+
+=== Cell 5 (code) ===
+print("Running benchmark inference across all domains...")
+all_gts = []
+docling_preds = []
+nemotron_preds = []
+docling_times = []
+nemotron_times = []
+
+t0 = time.time()
+for idx, s in enumerate(samples):
+    print(f"[{idx+1}/{len(samples)}] Processing {s['document_id']} Page {s['page_number']}...")
+    
+    # DocLayoutYOLO
+    t_dl = time.time()
+    dl_det = run_docling_on_pdf(s['pdf_path'], s['page_number'])
+    docling_times.append(time.time() - t_dl)
+    docling_preds.append(dl_det)
+    
+    # Nemotron
+    t_nm = time.time()
+    nm_det = run_nemotron_on_page(s['image_path'])
+    nemotron_times.append(time.time() - t_nm)
+    nemotron_preds.append(nm_det)
+    
+    all_gts.append(s['gt'])
+
+total_time = time.time() - t0
+print(f"\nFinished evaluation loop in {total_time:.1f}s.")
+print(f"  DocLayoutYOLO avg: {np.mean(docling_times):.2f}s/page ({len(samples)/sum(docling_times):.2f} pages/sec)")
+print(f"  Nemotron avg:      {np.mean(nemotron_times):.2f}s/page ({len(samples)/sum(nemotron_times):.2f} pages/sec)")
+
+==================================================
+
+=== Cell 6 (markdown) ===
+## Overall Benchmark Results
+
+==================================================
+
+=== Cell 7 (code) ===
+iou_thresholds = np.linspace(0.5, 0.95, 10)
+valid_classes = set(CANONICAL_LABELS)
+
+dl_metrics = compute_map(all_gts, docling_preds, iou_thresholds, valid_classes)
+nm_metrics = compute_map(all_gts, nemotron_preds, iou_thresholds, valid_classes)
+
+rows = []
+for model_name, metrics, times in [
+    ("DocLayoutYOLO", dl_metrics, docling_times),
+    ("Nemotron-Parse", nm_metrics, nemotron_times)
+]:
+    rows.append({
+        "Model": model_name,
+        "mAP@50": metrics["mAP50"],
+        "mAP@50:95": metrics["mAP5095"],
+        "Precision": metrics["precision"],
+        "Recall": metrics["recall"],
+        "F1-Score": metrics["F1"],
+        "mean_IoU": metrics["mean_iou"],
+        "Avg Time (s/page)": np.mean(times),
+        "Pages/sec": len(samples) / sum(times),
+    })
+
+df_results = pd.DataFrame(rows).set_index("Model")
+display(df_results.style.format('{:.3f}').set_caption(
+    f'Overall Benchmark — {len(samples)} pages × 5 domains × 2 models'))
+
+==================================================
+
+=== Cell 8 (markdown) ===
+## Domain-Specific Results
+
+==================================================
+
+=== Cell 9 (code) ===
+domain_results = []
+domains_list = sorted(list(set(s['domain'] for s in samples)))
+
+for domain in domains_list:
+    indices = [i for i, s in enumerate(samples) if s['domain'] == domain]
+    domain_gts = [all_gts[i] for i in indices]
+    domain_dl = [docling_preds[i] for i in indices]
+    domain_nm = [nemotron_preds[i] for i in indices]
+    
+    dl_dom_m = compute_map(domain_gts, domain_dl, iou_thresholds, valid_classes)
+    nm_dom_m = compute_map(domain_gts, domain_nm, iou_thresholds, valid_classes)
+    
+    for model, met in [("DocLayoutYOLO", dl_dom_m), ("Nemotron-Parse", nm_dom_m)]:
+        domain_results.append({
+            "Domain": domain.replace('_', ' ').title(),
+            "Model": model,
+            "mAP@50": met["mAP50"],
+            "mAP@50:95": met["mAP5095"],
+            "Precision": met["precision"],
+            "Recall": met["recall"],
+            "F1-Score": met["F1"],
+            "mean_IoU": met["mean_iou"]
+        })
+
+df_domains = pd.DataFrame(domain_results).set_index(["Domain", "Model"])
+display(df_domains.style.format('{:.3f}').set_caption('Per-Domain Breakdown'))
+
+==================================================
+
+=== Cell 10 (markdown) ===
+## mAP@50:95 Comparison by Domain
+
+==================================================
+
+=== Cell 11 (code) ===
+df_plot = pd.DataFrame(domain_results)
+fig, axes = plt.subplots(1, 3, figsize=(18, 5))
+
+for ax, metric, title in zip(axes, ['mAP@50:95', 'F1-Score', 'mean_IoU'],
+                                   ['mAP@50:95', 'F1-Score', 'Mean IoU']):
+    sns.barplot(data=df_plot, x='Domain', y=metric, hue='Model', palette='muted', ax=ax)
+    ax.set_title(f'{title} by Domain', fontweight='bold')
+    ax.set_ylabel(title)
+    ax.set_xlabel('')
+    ax.set_ylim(0, 1.0)
+    ax.grid(axis='y', linestyle='--', alpha=0.7)
+    ax.tick_params(axis='x', rotation=25)
+
+plt.tight_layout()
+plt.savefig('benchmark_output/domain_comparison.png', dpi=150, bbox_inches='tight')
+plt.show()
+
+==================================================
+
+=== Cell 12 (markdown) ===
+## Per-Class Precision Heatmap (at IoU 0.50)
+
+==================================================
+
+=== Cell 13 (code) ===
+os.makedirs('benchmark_output', exist_ok=True)
+
+# Collect per-class AP from overall metrics
+classes = sorted(list(valid_classes))
+models = ['DocLayoutYOLO', 'Nemotron-Parse']
+all_metrics = [dl_metrics, nm_metrics]
+
+data = []
+for cls in classes:
+    row = []
+    for met in all_metrics:
+        row.append(met.get('ap50_per_class', {}).get(cls, 0))
+    data.append(row)
+
+hm_df = pd.DataFrame(data, index=classes, columns=models)
+
+fig, ax = plt.subplots(figsize=(8, 8))
+sns.heatmap(hm_df, annot=True, fmt='.3f', cmap='RdYlGn',
+            linewidths=.5, vmin=0, vmax=1, ax=ax,
+            cbar_kws={'label': 'Precision @ IoU 0.50'})
+ax.set_title('Per-Class Precision @ IoU 0.50 — Synthetic GT', fontsize=13, fontweight='bold')
+plt.tight_layout()
+plt.savefig('benchmark_output/perclass_heatmap.png', dpi=150, bbox_inches='tight')
+plt.show()
+
+==================================================
+
+=== Cell 14 (markdown) ===
+## Visual Comparison: GT vs. DocLayoutYOLO vs. Nemotron-Parse
+
+One sample from each domain showing ground-truth annotations alongside model predictions.
+
+==================================================
+
+=== Cell 15 (code) ===
+color_map = {
+    'title': '#e63946', 'section_header': '#ff6b35', 'text': '#457b9d',
+    'list_item': '#2a9d8f', 'table': '#e9c46a', 'picture': '#f4a261',
+    'caption': '#8ecae6', 'footnote': '#a8dadc', 'formula': '#6d6875',
+    'page_header': '#b5838d', 'page_footer': '#e5989b'
+}
+
+fig, axes = plt.subplots(len(domains_list), 3, figsize=(18, 6 * len(domains_list)))
+
+for d_idx, domain in enumerate(domains_list):
+    sample_idx = next(i for i, s in enumerate(samples) if s['domain'] == domain)
+    s = samples[sample_idx]
+    
+    img = Image.open(s['image_path']).convert("RGB")
+    
+    def draw_on_img(pil_img, detections, cmap, dpi=150):
+        draw_img = pil_img.copy()
+        draw = ImageDraw.Draw(draw_img)
+        for d in detections:
+            x0, y0, x1, y1 = d['bbox']
+            x0_px = x0 * dpi / 72.0
+            y0_px = y0 * dpi / 72.0
+            x1_px = x1 * dpi / 72.0
+            y1_px = y1 * dpi / 72.0
+            draw.rectangle([x0_px, y0_px, x1_px, y1_px],
+                           outline=cmap.get(d['label'], '#888888'), width=3)
+        return draw_img
+    
+    gt_drawn = draw_on_img(img, s['gt'], color_map)
+    dl_drawn = draw_on_img(img, docling_preds[sample_idx], color_map)
+    nm_drawn = draw_on_img(img, nemotron_preds[sample_idx], color_map)
+    
+    display_name = domain.replace('_', ' ').title()
+    axes[d_idx, 0].imshow(gt_drawn)
+    axes[d_idx, 0].set_title(f"{display_name} — Ground Truth ({len(s['gt'])} elements)")
+    axes[d_idx, 0].axis("off")
+    
+    axes[d_idx, 1].imshow(dl_drawn)
+    axes[d_idx, 1].set_title(f"{display_name} — DocLayoutYOLO ({len(docling_preds[sample_idx])} detections)")
+    axes[d_idx, 1].axis("off")
+    
+    axes[d_idx, 2].imshow(nm_drawn)
+    axes[d_idx, 2].set_title(f"{display_name} — Nemotron-Parse ({len(nemotron_preds[sample_idx])} detections)")
+    axes[d_idx, 2].axis("off")
+
+plt.tight_layout()
+plt.savefig('benchmark_output/visual_comparison.png', dpi=150, bbox_inches='tight')
+plt.show()
+
+==================================================
+
+=== Cell 16 (markdown) ===
+## Timing Summary
+
+==================================================
+
+=== Cell 17 (code) ===
+timing_data = {
+    'Model': ['DocLayoutYOLO', 'Nemotron-Parse'],
+    'Total Time (s)': [sum(docling_times), sum(nemotron_times)],
+    'Avg per Page (s)': [np.mean(docling_times), np.mean(nemotron_times)],
+    'Median per Page (s)': [np.median(docling_times), np.median(nemotron_times)],
+    'Pages/sec': [len(samples)/sum(docling_times), len(samples)/sum(nemotron_times)],
+}
+df_timing = pd.DataFrame(timing_data).set_index('Model')
+display(df_timing.style.format('{:.3f}').set_caption('Inference Timing'))
+
+# Per-domain timing
+domain_timing = []
+for domain in domains_list:
+    indices = [i for i, s in enumerate(samples) if s['domain'] == domain]
+    dl_t = np.mean([docling_times[i] for i in indices])
+    nm_t = np.mean([nemotron_times[i] for i in indices])
+    domain_timing.append({'Domain': domain.replace('_', ' ').title(),
+                          'DocLayoutYOLO (s/page)': dl_t,
+                          'Nemotron (s/page)': nm_t})
+
+df_dom_timing = pd.DataFrame(domain_timing).set_index('Domain')
+display(df_dom_timing.style.format('{:.2f}').set_caption('Per-Domain Average Inference Time'))
+
+==================================================
+
+=== Cell 18 (code) ===
+# Save results to CSV
+os.makedirs('benchmark_output', exist_ok=True)
+df_results.to_csv('benchmark_output/overall_results.csv')
+df_domains.to_csv('benchmark_output/domain_results.csv')
+df_timing.to_csv('benchmark_output/timing_results.csv')
+print("Results saved to benchmark_output/")
+print("\n" + "="*60)
+print("BENCHMARK COMPLETE")
+print(f"Total pages evaluated: {len(samples)}")
+print(f"Total time: {total_time:.1f}s")
+print("="*60)
+
+==================================================

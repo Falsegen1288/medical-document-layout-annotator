@@ -1,0 +1,1332 @@
+{
+  "document": "MedCore_Catalogue.pdf",
+  "page_size": {
+    "width": 595.28,
+    "height": 841.89,
+    "unit": "points"
+  },
+  "pages": [
+    {
+      "page": 1,
+      "title": "Cover Page",
+      "elements": [
+        {
+          "id": "elem_0001",
+          "class": "figure",
+          "content": "hex_grid_background",
+          "bbox_pt": {
+            "x": 0,
+            "y": 0,
+            "w": 595.28,
+            "h": 841.89
+          },
+          "bbox_norm": {
+            "x": 0.0,
+            "y": 0.0,
+            "w": 1.0,
+            "h": 1.0
+          },
+          "yolo": "3 0.5 0.5 1.0 1.0"
+        },
+        {
+          "id": "elem_0002",
+          "class": "logo",
+          "content": "MedCore Logo",
+          "bbox_pt": {
+            "x": 45.35,
+            "y": 728.5,
+            "w": 68.03,
+            "h": 68.03
+          },
+          "bbox_norm": {
+            "x": 0.0762,
+            "y": 0.8653,
+            "w": 0.1143,
+            "h": 0.0808
+          },
+          "yolo": "7 0.1333 0.9057 0.1143 0.0808"
+        },
+        {
+          "id": "elem_0003",
+          "class": "header",
+          "content": "Company Nameplate + Certifications",
+          "bbox_pt": {
+            "x": 45.35,
+            "y": 722.83,
+            "w": 504.57,
+            "h": 68.03
+          },
+          "bbox_norm": {
+            "x": 0.0762,
+            "y": 0.8586,
+            "w": 0.8476,
+            "h": 0.0808
+          },
+          "yolo": "5 0.5 0.899 0.8476 0.0808"
+        },
+        {
+          "id": "elem_0004",
+          "class": "title",
+          "content": "2024\u20132025 Product Catalogue",
+          "bbox_pt": {
+            "x": 56.69,
+            "y": 637.8,
+            "w": 481.89,
+            "h": 73.7
+          },
+          "bbox_norm": {
+            "x": 0.0952,
+            "y": 0.7576,
+            "w": 0.8095,
+            "h": 0.0875
+          },
+          "yolo": "0 0.5 0.8013 0.8095 0.0875"
+        },
+        {
+          "id": "elem_0005",
+          "class": "figure",
+          "content": "Hero image - surgical instruments blue drape",
+          "bbox_pt": {
+            "x": 42.52,
+            "y": 34.02,
+            "w": 510.24,
+            "h": 552.76
+          },
+          "bbox_norm": {
+            "x": 0.0714,
+            "y": 0.0404,
+            "w": 0.8571,
+            "h": 0.6566
+          },
+          "yolo": "3 0.5 0.3687 0.8571 0.6566"
+        },
+        {
+          "id": "elem_0006",
+          "class": "caption",
+          "content": "Hero image caption",
+          "bbox_pt": {
+            "x": 42.52,
+            "y": 34.02,
+            "w": 510.24,
+            "h": 28.35
+          },
+          "bbox_norm": {
+            "x": 0.0714,
+            "y": 0.0404,
+            "w": 0.8571,
+            "h": 0.0337
+          },
+          "yolo": "4 0.5 0.0572 0.8571 0.0337"
+        },
+        {
+          "id": "elem_0007",
+          "class": "section_header",
+          "content": "Bottom info strip",
+          "bbox_pt": {
+            "x": 0,
+            "y": 62.36,
+            "w": 595.28,
+            "h": 85.04
+          },
+          "bbox_norm": {
+            "x": 0.0,
+            "y": 0.0741,
+            "w": 1.0,
+            "h": 0.101
+          },
+          "yolo": "9 0.5 0.1246 1.0 0.101"
+        },
+        {
+          "id": "elem_0008",
+          "class": "footer",
+          "content": "Cover footer",
+          "bbox_pt": {
+            "x": 0,
+            "y": 0,
+            "w": 595.28,
+            "h": 56.69
+          },
+          "bbox_norm": {
+            "x": 0.0,
+            "y": 0.0,
+            "w": 1.0,
+            "h": 0.0673
+          },
+          "yolo": "6 0.5 0.0337 1.0 0.0673"
+        }
+      ]
+    },
+    {
+      "page": 2,
+      "title": "Diagnostic Instruments",
+      "elements": [
+        {
+          "id": "elem_0009",
+          "class": "header",
+          "content": "Page Header",
+          "bbox_pt": {
+            "x": 0,
+            "y": 748.35,
+            "w": 595.28,
+            "h": 93.54
+          },
+          "bbox_norm": {
+            "x": 0.0,
+            "y": 0.8889,
+            "w": 1.0,
+            "h": 0.1111
+          },
+          "yolo": "5 0.5 0.9444 1.0 0.1111"
+        },
+        {
+          "id": "elem_0010",
+          "class": "section_header",
+          "content": "Section 1 - Diagnostic Equipment",
+          "bbox_pt": {
+            "x": 0,
+            "y": 722.83,
+            "w": 595.28,
+            "h": 31.18
+          },
+          "bbox_norm": {
+            "x": 0.0,
+            "y": 0.8586,
+            "w": 1.0,
+            "h": 0.037
+          },
+          "yolo": "9 0.5 0.8771 1.0 0.037"
+        },
+        {
+          "id": "elem_0011",
+          "class": "figure",
+          "content": "Patient Monitor VitalScan Pro",
+          "bbox_pt": {
+            "x": 42.52,
+            "y": 541.42,
+            "w": 223.94,
+            "h": 113.39
+          },
+          "bbox_norm": {
+            "x": 0.0714,
+            "y": 0.6431,
+            "w": 0.3762,
+            "h": 0.1347
+          },
+          "yolo": "3 0.2595 0.7104 0.3762 0.1347"
+        },
+        {
+          "id": "elem_0012",
+          "class": "title",
+          "content": "VitalScan Pro 9000",
+          "bbox_pt": {
+            "x": 42.52,
+            "y": 498.9,
+            "w": 223.94,
+            "h": 28.35
+          },
+          "bbox_norm": {
+            "x": 0.0714,
+            "y": 0.5926,
+            "w": 0.3762,
+            "h": 0.0337
+          },
+          "yolo": "0 0.2595 0.6094 0.3762 0.0337"
+        },
+        {
+          "id": "elem_0013",
+          "class": "paragraph",
+          "content": "Hospital-grade continuous monitoring with 15\" anti-glare TFT display. Integrates seamlessly with EMR systems via HL7. Alarm customization and nurse-call integration ensure zero-miss events.",
+          "bbox_pt": {
+            "x": 42.52,
+            "y": 464.56,
+            "w": 223.94,
+            "h": 37.17
+          },
+          "bbox_norm": {
+            "x": 0.0714,
+            "y": 0.5518,
+            "w": 0.3762,
+            "h": 0.0441
+          },
+          "yolo": "1 0.2595 0.5739 0.3762 0.0441"
+        },
+        {
+          "id": "elem_0014",
+          "class": "table",
+          "content": "Specs: VitalScan Pro 9000",
+          "bbox_pt": {
+            "x": 39.69,
+            "y": 325.67,
+            "w": 229.61,
+            "h": 130.39
+          },
+          "bbox_norm": {
+            "x": 0.0667,
+            "y": 0.3868,
+            "w": 0.3857,
+            "h": 0.1549
+          },
+          "yolo": "2 0.2595 0.4643 0.3857 0.1549",
+          "rows": 7,
+          "cols": 2
+        },
+        {
+          "id": "elem_0015",
+          "class": "section_header",
+          "content": "Product Card: VitalScan Pro 9000",
+          "bbox_pt": {
+            "x": 34.02,
+            "y": 314.65,
+            "w": 240.94,
+            "h": 368.5
+          },
+          "bbox_norm": {
+            "x": 0.0571,
+            "y": 0.3737,
+            "w": 0.4048,
+            "h": 0.4377
+          },
+          "yolo": "9 0.2595 0.5926 0.4048 0.4377"
+        },
+        {
+          "id": "elem_0016",
+          "class": "figure",
+          "content": "DermoScope Elite 3X",
+          "bbox_pt": {
+            "x": 323.15,
+            "y": 541.42,
+            "w": 223.94,
+            "h": 113.39
+          },
+          "bbox_norm": {
+            "x": 0.5429,
+            "y": 0.6431,
+            "w": 0.3762,
+            "h": 0.1347
+          },
+          "yolo": "3 0.731 0.7104 0.3762 0.1347"
+        },
+        {
+          "id": "elem_0017",
+          "class": "title",
+          "content": "DermoScope Elite 3X",
+          "bbox_pt": {
+            "x": 323.15,
+            "y": 498.9,
+            "w": 223.94,
+            "h": 28.35
+          },
+          "bbox_norm": {
+            "x": 0.5429,
+            "y": 0.5926,
+            "w": 0.3762,
+            "h": 0.0337
+          },
+          "yolo": "0 0.731 0.6094 0.3762 0.0337"
+        },
+        {
+          "id": "elem_0018",
+          "class": "paragraph",
+          "content": "Offers 10\u201330\u00d7 magnification with polarized and non-polarized light modes for sub-surface skin structure visualization. WiFi-enabled camera transmits images directly to diagnostic workstation.",
+          "bbox_pt": {
+            "x": 323.15,
+            "y": 464.56,
+            "w": 223.94,
+            "h": 37.17
+          },
+          "bbox_norm": {
+            "x": 0.5429,
+            "y": 0.5518,
+            "w": 0.3762,
+            "h": 0.0441
+          },
+          "yolo": "1 0.731 0.5739 0.3762 0.0441"
+        },
+        {
+          "id": "elem_0019",
+          "class": "table",
+          "content": "Specs: DermoScope Elite 3X",
+          "bbox_pt": {
+            "x": 320.31,
+            "y": 325.67,
+            "w": 229.61,
+            "h": 130.39
+          },
+          "bbox_norm": {
+            "x": 0.5381,
+            "y": 0.3868,
+            "w": 0.3857,
+            "h": 0.1549
+          },
+          "yolo": "2 0.731 0.4643 0.3857 0.1549",
+          "rows": 7,
+          "cols": 2
+        },
+        {
+          "id": "elem_0020",
+          "class": "section_header",
+          "content": "Product Card: DermoScope Elite 3X",
+          "bbox_pt": {
+            "x": 314.65,
+            "y": 314.65,
+            "w": 240.94,
+            "h": 368.5
+          },
+          "bbox_norm": {
+            "x": 0.5286,
+            "y": 0.3737,
+            "w": 0.4048,
+            "h": 0.4377
+          },
+          "yolo": "9 0.731 0.5926 0.4048 0.4377"
+        },
+        {
+          "id": "elem_0021",
+          "class": "figure",
+          "content": "AuraScan Digital Otoscope",
+          "bbox_pt": {
+            "x": 42.52,
+            "y": 158.74,
+            "w": 223.94,
+            "h": 113.39
+          },
+          "bbox_norm": {
+            "x": 0.0714,
+            "y": 0.1886,
+            "w": 0.3762,
+            "h": 0.1347
+          },
+          "yolo": "3 0.2595 0.2559 0.3762 0.1347"
+        },
+        {
+          "id": "elem_0022",
+          "class": "title",
+          "content": "AuraScan Digital Otoscope",
+          "bbox_pt": {
+            "x": 42.52,
+            "y": 116.22,
+            "w": 223.94,
+            "h": 28.35
+          },
+          "bbox_norm": {
+            "x": 0.0714,
+            "y": 0.138,
+            "w": 0.3762,
+            "h": 0.0337
+          },
+          "yolo": "0 0.2595 0.1549 0.3762 0.0337"
+        },
+        {
+          "id": "elem_0023",
+          "class": "paragraph",
+          "content": "Crystal-clear 1080p HD tympanic membrane visualization with tungsten-free LED illumination for accurate ENT diagnosis in pediatric and adult patients. USB-C output for EMR integration.",
+          "bbox_pt": {
+            "x": 42.52,
+            "y": 81.89,
+            "w": 223.94,
+            "h": 37.17
+          },
+          "bbox_norm": {
+            "x": 0.0714,
+            "y": 0.0973,
+            "w": 0.3762,
+            "h": 0.0441
+          },
+          "yolo": "1 0.2595 0.1193 0.3762 0.0441"
+        },
+        {
+          "id": "elem_0024",
+          "class": "table",
+          "content": "Specs: AuraScan Digital Otoscope",
+          "bbox_pt": {
+            "x": 39.69,
+            "y": -23.0,
+            "w": 229.61,
+            "h": 96.38
+          },
+          "bbox_norm": {
+            "x": 0.0667,
+            "y": -0.0273,
+            "w": 0.3857,
+            "h": 0.1145
+          },
+          "yolo": "2 0.2595 0.0299 0.3857 0.1145",
+          "rows": 5,
+          "cols": 2
+        },
+        {
+          "id": "elem_0025",
+          "class": "section_header",
+          "content": "Product Card: AuraScan",
+          "bbox_pt": {
+            "x": 34.02,
+            "y": -51.02,
+            "w": 240.94,
+            "h": 351.5
+          },
+          "bbox_norm": {
+            "x": 0.0571,
+            "y": -0.0606,
+            "w": 0.4048,
+            "h": 0.4175
+          },
+          "yolo": "9 0.2595 0.1481 0.4048 0.4175"
+        },
+        {
+          "id": "elem_0026",
+          "class": "figure",
+          "content": "GlucoSense Pro Glucometer",
+          "bbox_pt": {
+            "x": 323.15,
+            "y": 158.74,
+            "w": 223.94,
+            "h": 113.39
+          },
+          "bbox_norm": {
+            "x": 0.5429,
+            "y": 0.1886,
+            "w": 0.3762,
+            "h": 0.1347
+          },
+          "yolo": "3 0.731 0.2559 0.3762 0.1347"
+        },
+        {
+          "id": "elem_0027",
+          "class": "title",
+          "content": "GlucoSense Pro (Lab Grade)",
+          "bbox_pt": {
+            "x": 323.15,
+            "y": 116.22,
+            "w": 223.94,
+            "h": 28.35
+          },
+          "bbox_norm": {
+            "x": 0.5429,
+            "y": 0.138,
+            "w": 0.3762,
+            "h": 0.0337
+          },
+          "yolo": "0 0.731 0.1549 0.3762 0.0337"
+        },
+        {
+          "id": "elem_0028",
+          "class": "paragraph",
+          "content": "Lab-accurate blood glucose readings in under 5 seconds. Hematocrit correction and altitude compensation algorithms ensure reliable results across diverse patient populations.",
+          "bbox_pt": {
+            "x": 323.15,
+            "y": 81.89,
+            "w": 223.94,
+            "h": 37.17
+          },
+          "bbox_norm": {
+            "x": 0.5429,
+            "y": 0.0973,
+            "w": 0.3762,
+            "h": 0.0441
+          },
+          "yolo": "1 0.731 0.1193 0.3762 0.0441"
+        },
+        {
+          "id": "elem_0029",
+          "class": "table",
+          "content": "Specs: GlucoSense Pro (Lab Grade)",
+          "bbox_pt": {
+            "x": 320.31,
+            "y": -23.0,
+            "w": 229.61,
+            "h": 96.38
+          },
+          "bbox_norm": {
+            "x": 0.5381,
+            "y": -0.0273,
+            "w": 0.3857,
+            "h": 0.1145
+          },
+          "yolo": "2 0.731 0.0299 0.3857 0.1145",
+          "rows": 5,
+          "cols": 2
+        },
+        {
+          "id": "elem_0030",
+          "class": "section_header",
+          "content": "Product Card: GlucoSense Pro",
+          "bbox_pt": {
+            "x": 314.65,
+            "y": -51.02,
+            "w": 240.94,
+            "h": 351.5
+          },
+          "bbox_norm": {
+            "x": 0.5286,
+            "y": -0.0606,
+            "w": 0.4048,
+            "h": 0.4175
+          },
+          "yolo": "9 0.731 0.1481 0.4048 0.4175"
+        },
+        {
+          "id": "elem_0031",
+          "class": "footer",
+          "content": "Warranty strip",
+          "bbox_pt": {
+            "x": 0,
+            "y": 36.85,
+            "w": 595.28,
+            "h": 25.51
+          },
+          "bbox_norm": {
+            "x": 0.0,
+            "y": 0.0438,
+            "w": 1.0,
+            "h": 0.0303
+          },
+          "yolo": "6 0.5 0.0589 1.0 0.0303"
+        },
+        {
+          "id": "elem_0032",
+          "class": "footer",
+          "content": "Page 2 footer",
+          "bbox_pt": {
+            "x": 0,
+            "y": 0,
+            "w": 595.28,
+            "h": 34.02
+          },
+          "bbox_norm": {
+            "x": 0.0,
+            "y": 0.0,
+            "w": 1.0,
+            "h": 0.0404
+          },
+          "yolo": "6 0.5 0.0202 1.0 0.0404"
+        }
+      ]
+    },
+    {
+      "page": 3,
+      "title": "Surgical Instruments & Comparison",
+      "elements": [
+        {
+          "id": "elem_0033",
+          "class": "header",
+          "content": "Page Header",
+          "bbox_pt": {
+            "x": 0,
+            "y": 748.35,
+            "w": 595.28,
+            "h": 93.54
+          },
+          "bbox_norm": {
+            "x": 0.0,
+            "y": 0.8889,
+            "w": 1.0,
+            "h": 0.1111
+          },
+          "yolo": "5 0.5 0.9444 1.0 0.1111"
+        },
+        {
+          "id": "elem_0034",
+          "class": "section_header",
+          "content": "Section 2 Banner",
+          "bbox_pt": {
+            "x": 0,
+            "y": 722.83,
+            "w": 595.28,
+            "h": 31.18
+          },
+          "bbox_norm": {
+            "x": 0.0,
+            "y": 0.8586,
+            "w": 1.0,
+            "h": 0.037
+          },
+          "yolo": "9 0.5 0.8771 1.0 0.037"
+        },
+        {
+          "id": "elem_0035",
+          "class": "figure",
+          "content": "SurgSet Pro 42-piece tray",
+          "bbox_pt": {
+            "x": 39.69,
+            "y": 544.25,
+            "w": 232.44,
+            "h": 144.57
+          },
+          "bbox_norm": {
+            "x": 0.0667,
+            "y": 0.6465,
+            "w": 0.3905,
+            "h": 0.1717
+          },
+          "yolo": "3 0.2619 0.7323 0.3905 0.1717"
+        },
+        {
+          "id": "elem_0036",
+          "class": "title",
+          "content": "SurgSet Pro 42-Piece Kit",
+          "bbox_pt": {
+            "x": 42.52,
+            "y": 504.57,
+            "w": 226.77,
+            "h": 28.35
+          },
+          "bbox_norm": {
+            "x": 0.0714,
+            "y": 0.5993,
+            "w": 0.381,
+            "h": 0.0337
+          },
+          "yolo": "0 0.2619 0.6162 0.381 0.0337"
+        },
+        {
+          "id": "elem_0037",
+          "class": "paragraph",
+          "content": "SurgSet description",
+          "bbox_pt": {
+            "x": 42.52,
+            "y": 447.87,
+            "w": 226.77,
+            "h": 51.02
+          },
+          "bbox_norm": {
+            "x": 0.0714,
+            "y": 0.532,
+            "w": 0.381,
+            "h": 0.0606
+          },
+          "yolo": "1 0.2619 0.5623 0.381 0.0606"
+        },
+        {
+          "id": "elem_0038",
+          "class": "list",
+          "content": "SurgSet includes list",
+          "bbox_pt": {
+            "x": 39.69,
+            "y": 408.19,
+            "w": 232.44,
+            "h": 34.02
+          },
+          "bbox_norm": {
+            "x": 0.0667,
+            "y": 0.4848,
+            "w": 0.3905,
+            "h": 0.0404
+          },
+          "yolo": "8 0.2619 0.5051 0.3905 0.0404"
+        },
+        {
+          "id": "elem_0039",
+          "class": "figure",
+          "content": "LaparoTroc trocar set",
+          "bbox_pt": {
+            "x": 317.48,
+            "y": 544.25,
+            "w": 232.44,
+            "h": 144.57
+          },
+          "bbox_norm": {
+            "x": 0.5333,
+            "y": 0.6465,
+            "w": 0.3905,
+            "h": 0.1717
+          },
+          "yolo": "3 0.7286 0.7323 0.3905 0.1717"
+        },
+        {
+          "id": "elem_0040",
+          "class": "title",
+          "content": "LaparoTroc 5mm Trocar System",
+          "bbox_pt": {
+            "x": 320.31,
+            "y": 504.57,
+            "w": 226.77,
+            "h": 28.35
+          },
+          "bbox_norm": {
+            "x": 0.5381,
+            "y": 0.5993,
+            "w": 0.381,
+            "h": 0.0337
+          },
+          "yolo": "0 0.7286 0.6162 0.381 0.0337"
+        },
+        {
+          "id": "elem_0041",
+          "class": "paragraph",
+          "content": "LaparoTroc description",
+          "bbox_pt": {
+            "x": 320.31,
+            "y": 447.87,
+            "w": 226.77,
+            "h": 51.02
+          },
+          "bbox_norm": {
+            "x": 0.5381,
+            "y": 0.532,
+            "w": 0.381,
+            "h": 0.0606
+          },
+          "yolo": "1 0.7286 0.5623 0.381 0.0606"
+        },
+        {
+          "id": "elem_0042",
+          "class": "table",
+          "content": "LaparoTroc specs",
+          "bbox_pt": {
+            "x": 317.48,
+            "y": 408.19,
+            "w": 232.44,
+            "h": 34.02
+          },
+          "bbox_norm": {
+            "x": 0.5333,
+            "y": 0.4848,
+            "w": 0.3905,
+            "h": 0.0404
+          },
+          "yolo": "2 0.7286 0.5051 0.3905 0.0404",
+          "rows": 6,
+          "cols": 2
+        },
+        {
+          "id": "elem_0043",
+          "class": "section_header",
+          "content": "Monitor Comparison Header",
+          "bbox_pt": {
+            "x": 34.02,
+            "y": 362.83,
+            "w": 527.24,
+            "h": 25.51
+          },
+          "bbox_norm": {
+            "x": 0.0571,
+            "y": 0.431,
+            "w": 0.8857,
+            "h": 0.0303
+          },
+          "yolo": "9 0.5 0.4461 0.8857 0.0303"
+        },
+        {
+          "id": "elem_0044",
+          "class": "table",
+          "content": "Patient Monitor Comparison Table",
+          "bbox_pt": {
+            "x": 34.02,
+            "y": 116.79,
+            "w": 527.24,
+            "h": 246.05
+          },
+          "bbox_norm": {
+            "x": 0.0571,
+            "y": 0.1387,
+            "w": 0.8857,
+            "h": 0.2923
+          },
+          "yolo": "2 0.5 0.2848 0.8857 0.2923",
+          "rows": 14,
+          "cols": 4,
+          "headers": [
+            "Feature",
+            "VitalScan Standard",
+            "VitalScan Pro 9000",
+            "VitalScan Elite ICU"
+          ]
+        },
+        {
+          "id": "elem_0045",
+          "class": "footer",
+          "content": "Page 3 footer",
+          "bbox_pt": {
+            "x": 0,
+            "y": 0,
+            "w": 595.28,
+            "h": 34.02
+          },
+          "bbox_norm": {
+            "x": 0.0,
+            "y": 0.0,
+            "w": 1.0,
+            "h": 0.0404
+          },
+          "yolo": "6 0.5 0.0202 1.0 0.0404"
+        }
+      ]
+    },
+    {
+      "page": 4,
+      "title": "Ordering, Warranty & Contact",
+      "elements": [
+        {
+          "id": "elem_0046",
+          "class": "header",
+          "content": "Page Header",
+          "bbox_pt": {
+            "x": 0,
+            "y": 748.35,
+            "w": 595.28,
+            "h": 93.54
+          },
+          "bbox_norm": {
+            "x": 0.0,
+            "y": 0.8889,
+            "w": 1.0,
+            "h": 0.1111
+          },
+          "yolo": "5 0.5 0.9444 1.0 0.1111"
+        },
+        {
+          "id": "elem_0047",
+          "class": "section_header",
+          "content": "Section 3 Banner",
+          "bbox_pt": {
+            "x": 0,
+            "y": 722.83,
+            "w": 595.28,
+            "h": 31.18
+          },
+          "bbox_norm": {
+            "x": 0.0,
+            "y": 0.8586,
+            "w": 1.0,
+            "h": 0.037
+          },
+          "yolo": "9 0.5 0.8771 1.0 0.037"
+        },
+        {
+          "id": "elem_0048",
+          "class": "section_header",
+          "content": "Ordering & Delivery",
+          "bbox_pt": {
+            "x": 34.02,
+            "y": 688.82,
+            "w": 162.52,
+            "h": 25.51
+          },
+          "bbox_norm": {
+            "x": 0.0571,
+            "y": 0.8182,
+            "w": 0.273,
+            "h": 0.0303
+          },
+          "yolo": "9 0.1937 0.8333 0.273 0.0303"
+        },
+        {
+          "id": "elem_0049",
+          "class": "section_header",
+          "content": "Column 1 - Ordering",
+          "bbox_pt": {
+            "x": 34.02,
+            "y": 317.48,
+            "w": 162.52,
+            "h": 396.85
+          },
+          "bbox_norm": {
+            "x": 0.0571,
+            "y": 0.3771,
+            "w": 0.273,
+            "h": 0.4714
+          },
+          "yolo": "9 0.1937 0.6128 0.273 0.4714"
+        },
+        {
+          "id": "elem_0050",
+          "class": "paragraph",
+          "content": "Request a Formal Quote",
+          "bbox_pt": {
+            "x": 42.52,
+            "y": 643.46,
+            "w": 145.51,
+            "h": 19.84
+          },
+          "bbox_norm": {
+            "x": 0.0714,
+            "y": 0.7643,
+            "w": 0.2444,
+            "h": 0.0236
+          },
+          "yolo": "1 0.1937 0.7761 0.2444 0.0236"
+        },
+        {
+          "id": "elem_0051",
+          "class": "paragraph",
+          "content": "Submit an RFQ at www.medcore-intl.com/rfq with your product codes and quantities.",
+          "bbox_pt": {
+            "x": 42.52,
+            "y": 623.86,
+            "w": 145.51,
+            "h": 25.27
+          },
+          "bbox_norm": {
+            "x": 0.0714,
+            "y": 0.741,
+            "w": 0.2444,
+            "h": 0.03
+          },
+          "yolo": "1 0.1937 0.756 0.2444 0.03"
+        },
+        {
+          "id": "elem_0052",
+          "class": "paragraph",
+          "content": "Receive Proforma Invoice",
+          "bbox_pt": {
+            "x": 42.52,
+            "y": 572.84,
+            "w": 145.51,
+            "h": 19.84
+          },
+          "bbox_norm": {
+            "x": 0.0714,
+            "y": 0.6804,
+            "w": 0.2444,
+            "h": 0.0236
+          },
+          "yolo": "1 0.1937 0.6922 0.2444 0.0236"
+        },
+        {
+          "id": "elem_0053",
+          "class": "paragraph",
+          "content": "Proforma invoices issued within 24 business hours, valid for 30 days.",
+          "bbox_pt": {
+            "x": 42.52,
+            "y": 553.24,
+            "w": 145.51,
+            "h": 25.27
+          },
+          "bbox_norm": {
+            "x": 0.0714,
+            "y": 0.6571,
+            "w": 0.2444,
+            "h": 0.03
+          },
+          "yolo": "1 0.1937 0.6721 0.2444 0.03"
+        },
+        {
+          "id": "elem_0054",
+          "class": "paragraph",
+          "content": "Payment Terms",
+          "bbox_pt": {
+            "x": 42.52,
+            "y": 502.22,
+            "w": 145.51,
+            "h": 19.84
+          },
+          "bbox_norm": {
+            "x": 0.0714,
+            "y": 0.5965,
+            "w": 0.2444,
+            "h": 0.0236
+          },
+          "yolo": "1 0.1937 0.6083 0.2444 0.0236"
+        },
+        {
+          "id": "elem_0055",
+          "class": "paragraph",
+          "content": "Net 30 for approved accounts. 50% advance for new clients. LC accepted for orders >\u20ac50,000.",
+          "bbox_pt": {
+            "x": 42.52,
+            "y": 472.82,
+            "w": 145.51,
+            "h": 35.07
+          },
+          "bbox_norm": {
+            "x": 0.0714,
+            "y": 0.5616,
+            "w": 0.2444,
+            "h": 0.0417
+          },
+          "yolo": "1 0.1937 0.5824 0.2444 0.0417"
+        },
+        {
+          "id": "elem_0056",
+          "class": "paragraph",
+          "content": "Shipping & Delivery",
+          "bbox_pt": {
+            "x": 42.52,
+            "y": 421.79,
+            "w": 145.51,
+            "h": 19.84
+          },
+          "bbox_norm": {
+            "x": 0.0714,
+            "y": 0.501,
+            "w": 0.2444,
+            "h": 0.0236
+          },
+          "yolo": "1 0.1937 0.5128 0.2444 0.0236"
+        },
+        {
+          "id": "elem_0057",
+          "class": "paragraph",
+          "content": "DDP available globally. Standard: 7\u201310 days (Europe). Express: 2\u20133 days (DHL Medical Express).",
+          "bbox_pt": {
+            "x": 42.52,
+            "y": 392.39,
+            "w": 145.51,
+            "h": 35.07
+          },
+          "bbox_norm": {
+            "x": 0.0714,
+            "y": 0.4661,
+            "w": 0.2444,
+            "h": 0.0417
+          },
+          "yolo": "1 0.1937 0.4869 0.2444 0.0417"
+        },
+        {
+          "id": "elem_0058",
+          "class": "paragraph",
+          "content": "Delivery highlights box",
+          "bbox_pt": {
+            "x": 39.69,
+            "y": 396.85,
+            "w": 151.18,
+            "h": 70.87
+          },
+          "bbox_norm": {
+            "x": 0.0667,
+            "y": 0.4714,
+            "w": 0.254,
+            "h": 0.0842
+          },
+          "yolo": "1 0.1937 0.5135 0.254 0.0842"
+        },
+        {
+          "id": "elem_0059",
+          "class": "section_header",
+          "content": "Warranty & Support",
+          "bbox_pt": {
+            "x": 216.38,
+            "y": 688.82,
+            "w": 162.52,
+            "h": 25.51
+          },
+          "bbox_norm": {
+            "x": 0.3635,
+            "y": 0.8182,
+            "w": 0.273,
+            "h": 0.0303
+          },
+          "yolo": "9 0.5 0.8333 0.273 0.0303"
+        },
+        {
+          "id": "elem_0060",
+          "class": "section_header",
+          "content": "Column 2 - Warranty",
+          "bbox_pt": {
+            "x": 216.38,
+            "y": 317.48,
+            "w": 162.52,
+            "h": 396.85
+          },
+          "bbox_norm": {
+            "x": 0.3635,
+            "y": 0.3771,
+            "w": 0.273,
+            "h": 0.4714
+          },
+          "yolo": "9 0.5 0.6128 0.273 0.4714"
+        },
+        {
+          "id": "elem_0061",
+          "class": "paragraph",
+          "content": "Warranty coverage box",
+          "bbox_pt": {
+            "x": 222.05,
+            "y": 578.27,
+            "w": 151.18,
+            "h": 99.21
+          },
+          "bbox_norm": {
+            "x": 0.373,
+            "y": 0.6869,
+            "w": 0.254,
+            "h": 0.1178
+          },
+          "yolo": "1 0.5 0.7458 0.254 0.1178"
+        },
+        {
+          "id": "elem_0062",
+          "class": "table",
+          "content": "ServicePlus Plans",
+          "bbox_pt": {
+            "x": 222.05,
+            "y": 464.88,
+            "w": 151.18,
+            "h": 107.72
+          },
+          "bbox_norm": {
+            "x": 0.373,
+            "y": 0.5522,
+            "w": 0.254,
+            "h": 0.1279
+          },
+          "yolo": "2 0.5 0.6162 0.254 0.1279",
+          "rows": 4,
+          "cols": 3
+        },
+        {
+          "id": "elem_0063",
+          "class": "paragraph",
+          "content": "Calibration services box",
+          "bbox_pt": {
+            "x": 222.05,
+            "y": 323.15,
+            "w": 151.18,
+            "h": 136.06
+          },
+          "bbox_norm": {
+            "x": 0.373,
+            "y": 0.3838,
+            "w": 0.254,
+            "h": 0.1616
+          },
+          "yolo": "1 0.5 0.4646 0.254 0.1616"
+        },
+        {
+          "id": "elem_0064",
+          "class": "section_header",
+          "content": "Get In Touch",
+          "bbox_pt": {
+            "x": 398.74,
+            "y": 688.82,
+            "w": 162.52,
+            "h": 25.51
+          },
+          "bbox_norm": {
+            "x": 0.6698,
+            "y": 0.8182,
+            "w": 0.273,
+            "h": 0.0303
+          },
+          "yolo": "9 0.8063 0.8333 0.273 0.0303"
+        },
+        {
+          "id": "elem_0065",
+          "class": "section_header",
+          "content": "Column 3 - Contact",
+          "bbox_pt": {
+            "x": 398.74,
+            "y": 317.48,
+            "w": 162.52,
+            "h": 396.85
+          },
+          "bbox_norm": {
+            "x": 0.6698,
+            "y": 0.3771,
+            "w": 0.273,
+            "h": 0.4714
+          },
+          "yolo": "9 0.8063 0.6128 0.273 0.4714"
+        },
+        {
+          "id": "elem_0066",
+          "class": "figure",
+          "content": "Global offices world map",
+          "bbox_pt": {
+            "x": 404.41,
+            "y": 572.6,
+            "w": 151.18,
+            "h": 107.72
+          },
+          "bbox_norm": {
+            "x": 0.6794,
+            "y": 0.6801,
+            "w": 0.254,
+            "h": 0.1279
+          },
+          "yolo": "3 0.8063 0.7441 0.254 0.1279"
+        },
+        {
+          "id": "elem_0067",
+          "class": "paragraph",
+          "content": "HQ Address",
+          "bbox_pt": {
+            "x": 407.24,
+            "y": 456.38,
+            "w": 145.51,
+            "h": 107.72
+          },
+          "bbox_norm": {
+            "x": 0.6841,
+            "y": 0.5421,
+            "w": 0.2444,
+            "h": 0.1279
+          },
+          "yolo": "1 0.8063 0.6061 0.2444 0.1279"
+        },
+        {
+          "id": "elem_0068",
+          "class": "list",
+          "content": "Regional offices list",
+          "bbox_pt": {
+            "x": 404.41,
+            "y": 342.99,
+            "w": 151.18,
+            "h": 104.88
+          },
+          "bbox_norm": {
+            "x": 0.6794,
+            "y": 0.4074,
+            "w": 0.254,
+            "h": 0.1246
+          },
+          "yolo": "8 0.8063 0.4697 0.254 0.1246"
+        },
+        {
+          "id": "elem_0069",
+          "class": "paragraph",
+          "content": "Contact details box",
+          "bbox_pt": {
+            "x": 404.41,
+            "y": 323.15,
+            "w": 151.18,
+            "h": 8.5
+          },
+          "bbox_norm": {
+            "x": 0.6794,
+            "y": 0.3838,
+            "w": 0.254,
+            "h": 0.0101
+          },
+          "yolo": "1 0.8063 0.3889 0.254 0.0101"
+        },
+        {
+          "id": "elem_0070",
+          "class": "section_header",
+          "content": "Bottom promo band",
+          "bbox_pt": {
+            "x": 0,
+            "y": 243.78,
+            "w": 595.28,
+            "h": 56.69
+          },
+          "bbox_norm": {
+            "x": 0.0,
+            "y": 0.2896,
+            "w": 1.0,
+            "h": 0.0673
+          },
+          "yolo": "9 0.5 0.3232 1.0 0.0673"
+        },
+        {
+          "id": "elem_0071",
+          "class": "footer",
+          "content": "Page 4 footer",
+          "bbox_pt": {
+            "x": 0,
+            "y": 0,
+            "w": 595.28,
+            "h": 34.02
+          },
+          "bbox_norm": {
+            "x": 0.0,
+            "y": 0.0,
+            "w": 1.0,
+            "h": 0.0404
+          },
+          "yolo": "6 0.5 0.0202 1.0 0.0404"
+        }
+      ]
+    }
+  ]
+}

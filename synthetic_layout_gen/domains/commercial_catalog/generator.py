@@ -9,6 +9,44 @@ from synthetic_layout_gen.core.ground_truth_collector import GroundTruthCollecto
 from synthetic_layout_gen.core.playwright_capture import render_and_capture
 from synthetic_layout_gen.core.faker_providers import seed_faker, fake
 
+IMAGE_CATEGORY_MAP = {
+    "light": "desk_lamp",
+    "camera": "camera",
+    "chair": "office_chair",
+    "sofa": "office_chair",
+    "desk": "laptop",
+    "hub": "laptop",
+    "dock": "laptop",
+    "watch": "camera",
+    "diver": "camera",
+    "skeleton": "camera",
+    "minimalist": "camera",
+    "gmt": "camera",
+}
+
+def get_image_for_category(category: str, rng: random.Random) -> str:
+    manifest_path = "tools/image_pool/MANIFEST.jsonl"
+    if not os.path.exists(manifest_path):
+        return None
+    import json
+    from pathlib import Path
+    paths = []
+    with open(manifest_path, "r", encoding="utf-8") as f:
+        for line in f:
+            if not line.strip():
+                continue
+            try:
+                data = json.loads(line)
+                if data.get("category", "").lower() == category.lower() and data.get("path") and data.get("path") != "SKIPPED":
+                    if os.path.exists(data["path"]):
+                        paths.append(data["path"])
+            except:
+                pass
+    if paths:
+        selected = rng.choice(paths)
+        return Path(selected).resolve().as_uri()
+    return None
+
 # Predefined categories and products for realistic fake catalogs
 PRODUCT_DATA = {
     "Smart Home Tech": [
@@ -71,6 +109,7 @@ async def generate_one_async(sample_id: int, seed: int, output_root: str = "outp
     seed_faker(seed)
     
     domain = "commercial_catalog"
+    rng = random.Random(seed)
     doc_id = f"{domain}_{sample_id:05d}"
     
     theme_id = random.choice(THEME_IDS)
@@ -104,6 +143,16 @@ async def generate_one_async(sample_id: int, seed: int, output_root: str = "outp
         selected_specs = random.sample(possible_specs, k=random.randint(2, 3))
         for key, val in selected_specs:
             specs.append({"key": key, "value": val})
+        # Map product name to image pool category
+        img_cat = None
+        for keyword, target_cat in IMAGE_CATEGORY_MAP.items():
+            if keyword in item["name"].lower():
+                img_cat = target_cat
+                break
+                
+        image_uri = None
+        if img_cat:
+            image_uri = get_image_for_category(img_cat, rng)
             
         products_payload.append({
             "name": item["name"],
@@ -113,7 +162,8 @@ async def generate_one_async(sample_id: int, seed: int, output_root: str = "outp
             "start_color": g_start,
             "end_color": g_end,
             "product_label": item["label"],
-            "specs": specs if random.random() > 0.15 else None # 85% of items have a mini specs table
+            "specs": specs if random.random() > 0.15 else None, # 85% of items have a mini specs table
+            "image_path": image_uri
         })
         
     # Render variables
@@ -123,7 +173,6 @@ async def generate_one_async(sample_id: int, seed: int, output_root: str = "outp
     
     # Sample layout skeleton
     from synthetic_layout_gen.core.layout_skeleton import sample_skeleton_for_domain
-    rng = random.Random(seed)
     skeleton = sample_skeleton_for_domain("commercial_catalog", rng)
     
     scale_pt_to_px = 150.0 / 72.0

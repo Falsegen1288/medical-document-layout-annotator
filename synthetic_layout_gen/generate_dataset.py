@@ -16,7 +16,8 @@ DOMAINS = [
     "scientific_paper",
     "legal_opinion",
     "medical_report",
-    "commercial_catalog"
+    "commercial_catalog",
+    "medical_catalog"
 ]
 
 def print_distributional_report(domain: str, output_root: str = "output/"):
