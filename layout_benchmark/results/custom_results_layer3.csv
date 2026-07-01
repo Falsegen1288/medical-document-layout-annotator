@@ -1,0 +1,5 @@
+Missing,Hallucination,Size-Error,Split,Merge,Overlap-Pred,Duplicate,Misclassification,GT_Variant,Model
+13,32,4,0,2,1,0,0,GT-raw,DocLayoutYOLO
+15,28,3,0,1,2,0,0,GT-raw,Nemotron
+13,32,3,0,2,1,0,0,GT-tight,DocLayoutYOLO
+15,28,3,0,1,2,0,0,GT-tight,Nemotron
