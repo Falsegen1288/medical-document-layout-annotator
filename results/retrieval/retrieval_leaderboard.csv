@@ -1,0 +1,9 @@
+rank,model,strategy,spec_hit_at_5,overall_hit_at_5,faithfulness
+1,qwen3-embedding-8b-4bit,bm25_hybrid,1.00,0.518,0.454
+2,baseline,bm25_only,1.00,0.722,0.272
+3,bge-m3,bm25_hybrid,1.00,0.444,0.181
+4,nv-embed-v2-fp16,bm25_hybrid,1.00,0.500,0.181
+5,bge-m3,dense_only,1.00,0.240,0.090
+6,nomic-embed-text,bm25_hybrid,1.00,0.462,0.000
+7,bge-m3,dense_sparse_colbert_hybrid,0.50,0.166,0.090
+8,granite-vision-embedding,text_only,0.50,0.363,0.000
